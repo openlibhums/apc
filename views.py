@@ -1,8 +1,8 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib import messages
 
-from plugins.apc import plugin_settings, logic, forms
+from plugins.apc import plugin_settings, logic, forms, models
 from submission import models as submission_models
 from security.decorators import has_journal, editor_user_required
 from utils import setting_handler
@@ -11,18 +11,26 @@ from utils import setting_handler
 @has_journal
 @editor_user_required
 def index(request):
-    sections = submission_models.Section.objects.language().filter(journal=request.journal).prefetch_related('sectionapc')
+    sections = submission_models.Section.objects.language().filter(
+        journal=request.journal).prefetch_related('sectionapc')
+    waiver_applications = models.WaiverApplication.objects.filter(article__journal=request.journal)
+    modal = None
+
     form = forms.APCForm()
 
     if request.POST and 'section' in request.POST:
         form = forms.APCForm(request.POST)
         if form.is_valid():
             logic.handle_set_apc(request, form)
+        else:
+            modal = request.POST.get('section')
 
     template = 'apc/index.html'
     context = {
         'sections': sections,
         'form': form,
+        'waiver_applications': waiver_applications,
+        'modal': modal,
     }
 
     return render(request, template, context)

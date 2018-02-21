@@ -23,6 +23,22 @@
                     <div class="title-area">
                         <h2>Waiver Applications</h2>
                     </div>
+                    <div class="content">
+                        <table class="apctable">
+                            <thead>
+                                <th>Article</th>
+                                <th>Status</th>
+                                <th>Started</th>
+                            </thead>
+                            <tbody>
+                                {% for application in waiver_applications %}<tr>
+                                    <td>{{ application.article.title }}</td>
+                                    <td>{{ application.get_status_display }}</td>
+                                    <td>{{ application.made }}</td>
+                                </tr>{% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
             <div class="large-6 columns">
@@ -36,14 +52,12 @@
                                 <th>Name</th>
                                 <th>Submission</th>
                                 <th>APC Set</th>
-                                <th></th>
                             </thead>
                             <tbody>
                             {% for section in sections %}<tr>
-                                <td>{{ section.name }}</td>
+                                <td><a href="#" data-open="set_apc_{{ section.pk }}">{{ section.name }}</a></td>
                                 <td><i class={% if section.public_submissions %}"fa fa-check-circle-o" class="green"{% else %}"fa fa-times-circle-o" class="red"{% endif %}></i></td>
                                 <td><i class={% if section.sectionapc %}"fa fa-check-circle-o" class="green"{% else %}"fa fa-times-circle-o" class="red"{% endif %}></i></td>
-                                <td><a href="#" data-open="set_apc_{{ section.pk }}">Set APC</a></td>
                             </tr>{% endfor %}
                             </tbody>
                         </table>
@@ -59,5 +73,5 @@
 {% endblock %}
 
 {% block js %}
-    {% include "elements/datatables.html" with target="#test" sort=0 %}
+    {% include "elements/datatables.html" with target=".apctable" sort=0 %}
 {% endblock %}

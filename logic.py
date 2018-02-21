@@ -11,7 +11,5 @@ def handle_set_apc(request, form):
     if hasattr(section, 'sectionapc'):
         instance = section.sectionapc
         form = forms.APCForm(request.POST, instance=instance)
-    else:
-        instance = None
 
     return form.save(section=section)
