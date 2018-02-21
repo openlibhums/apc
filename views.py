@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.contrib import messages
 
-from plugins.apc import plugin_settings
+from plugins.apc import plugin_settings, logic, forms
 from submission import models as submission_models
 from security.decorators import has_journal, editor_user_required
 from utils import setting_handler
@@ -11,11 +11,18 @@ from utils import setting_handler
 @has_journal
 @editor_user_required
 def index(request):
-    sections = submission_models.Section.objects.language().filter(journal=request.journal)
+    sections = submission_models.Section.objects.language().filter(journal=request.journal).prefetch_related('sectionapc')
+    form = forms.APCForm()
+
+    if request.POST and 'section' in request.POST:
+        form = forms.APCForm(request.POST)
+        if form.is_valid():
+            logic.handle_set_apc(request, form)
 
     template = 'apc/index.html'
     context = {
         'sections': sections,
+        'form': form,
     }
 
     return render(request, template, context)

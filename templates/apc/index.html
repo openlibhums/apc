@@ -34,14 +34,16 @@
                         <table id="test" class="apctable">
                             <thead>
                                 <th>Name</th>
-                                <th>Available for Submission</th>
+                                <th>Submission</th>
+                                <th>APC Set</th>
                                 <th></th>
                             </thead>
                             <tbody>
                             {% for section in sections %}<tr>
                                 <td>{{ section.name }}</td>
                                 <td><i class={% if section.public_submissions %}"fa fa-check-circle-o" class="green"{% else %}"fa fa-times-circle-o" class="red"{% endif %}></i></td>
-                                <td></td>
+                                <td><i class={% if section.sectionapc %}"fa fa-check-circle-o" class="green"{% else %}"fa fa-times-circle-o" class="red"{% endif %}></i></td>
+                                <td><a href="#" data-open="set_apc_{{ section.pk }}">Set APC</a></td>
                             </tr>{% endfor %}
                             </tbody>
                         </table>
@@ -50,6 +52,10 @@
             </div>
         </div>
     </section>
+
+    {% for section in sections %}
+    {% include "apc/set_apc.html" %}
+    {% endfor %}
 {% endblock %}
 
 {% block js %}

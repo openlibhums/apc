@@ -12,7 +12,7 @@ def waiver_status_choices():
 
 
 class SectionAPC(models.Model):
-    section = models.ForeignKey('submission.Section')
+    section = models.OneToOneField('submission.Section')
     value = models.DecimalField(max_digits=6, decimal_places=2, help_text='Decimal with two places eg. 200.00')
     currency = models.CharField(max_length=25, help_text='The currency of the APC value eg. GBP or USD.')
 
