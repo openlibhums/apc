@@ -1,0 +1,34 @@
+{% extends "admin/core/base.html" %}
+
+{% block title %}APC Management{% endblock %}
+{% block title-section %}APC Management{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    <li><a href="{% url 'apc_index' %}">APC Management Plugin</a></li>
+    <li>Settings</li>
+{% endblock breadcrumbs %}
+
+{% block body %}
+    <section class="content">
+        <div class="row expanded">
+            <div class="large-12 columns">
+                <div class="box">
+                    <div class="title-area">
+                        <h2>Enable APCs for {{ request.journal.name }}</h2>
+                    </div>
+                    <div class="content">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <label for="enable_apcs">Enable APC display on the Submission page and on the Submission
+                                Start page.
+                                <input type="checkbox" name="enable_apcs" id="enable_apcs" {% if enable_apc == 'on' %}checked="checked"{% endif %}>
+                            </label>
+                            <button name="save" class="success button">Save</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
