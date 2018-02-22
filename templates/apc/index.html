@@ -16,10 +16,15 @@
                     <div class="title-area">
                         <h2>Articles Ready for Invoicing</h2>
                     </div>
+                    <div class="content">
+                        <p> Hi</p>
+                    </div>
                 </div>
             </div>
-            <div class="large-6 columns">
-                <div class="box">
+        </div>
+        <div class="row expanded" data-equalizer>
+            <div class="large-6 columns" >
+                <div class="box" data-equalizer-watch>
                     <div class="title-area">
                         <h2>Waiver Applications</h2>
                     </div>
@@ -32,7 +37,7 @@
                             </thead>
                             <tbody>
                                 {% for application in waiver_applications %}<tr>
-                                    <td>{{ application.article.title }}</td>
+                                    <td><a href="{% url 'apc_waiver_application' application.pk %}">{{ application.article.title }}</a></td>
                                     <td>{{ application.get_status_display }}</td>
                                     <td>{{ application.made }}</td>
                                 </tr>{% endfor %}
@@ -41,8 +46,8 @@
                     </div>
                 </div>
             </div>
-            <div class="large-6 columns">
-                <div class="box">
+            <div class="large-6 columns" >
+                <div class="box" data-equalizer-watch>
                     <div class="title-area">
                         <h2>Sections</h2>
                     </div>
@@ -73,5 +78,5 @@
 {% endblock %}
 
 {% block js %}
-    {% include "elements/datatables.html" with target=".apctable" sort=0 %}
+    {% include "elements/datatables.html" with target=".apctable" sort=0 page_length=10 %}
 {% endblock %}
