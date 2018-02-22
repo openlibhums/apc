@@ -11,6 +11,15 @@ def waiver_status_choices():
     )
 
 
+def apc_status_choices():
+    return (
+        ('new', 'New'),
+        ('waived', 'Waived'),
+        ('paid', 'Paid'),
+        ('nonpay', 'Non Payment'),
+    )
+
+
 class SectionAPC(models.Model):
     section = models.OneToOneField('submission.Section')
     value = models.DecimalField(max_digits=6, decimal_places=2, help_text='Decimal with two places eg. 200.00')
@@ -20,13 +29,26 @@ class SectionAPC(models.Model):
         ordering = ('section__journal', 'value', 'currency')
 
 
+class ArticleAPC(models.Model):
+    article = models.OneToOneField('submission.Article')
+    section_apc = models.ForeignKey(SectionAPC)
+    value = models.DecimalField(max_digits=6, decimal_places=2, help_text='Decimal with two places eg. 200.00')
+    currency = models.CharField(max_length=25, help_text='The currency of the APC value eg. GBP or USD.')
+    recorded = models.DateTimeField(default=timezone.now)
+
+    status = models.CharField(max_length=25, choices=apc_status_choices(), default='new')
+    completed = models.DateTimeField(blank=True, null=True)
+
+
 class WaiverApplication(models.Model):
     article = models.ForeignKey('submission.Article')
     reviewer = models.ForeignKey('core.Account', blank=True, null=True)
     status = models.CharField(max_length=25, choices=waiver_status_choices(), default='new')
+    rationale = models.TextField(null=True)
 
     made = models.DateTimeField(default=timezone.now)
     reviewed = models.DateTimeField(blank=True, null=True)
+    response = models.TextField(null=True)
 
     class Meta:
         ordering = ('made', 'status')
