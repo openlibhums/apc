@@ -24,6 +24,10 @@
                                 Start page.
                                 <input type="checkbox" name="enable_apcs" id="enable_apcs" {% if enable_apc == 'on' %}checked="checked"{% endif %}>
                             </label>
+                            <label for="track_apcs">Enable this function to track APCs but don't display info.
+                                Start page.
+                                <input type="checkbox" name="track_apcs" id="track_apcs" {% if track_apcs == 'on' %}checked="checked"{% endif %}>
+                            </label>
                             <button name="save" class="success button">Save</button>
                         </form>
                     </div>

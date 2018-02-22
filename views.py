@@ -44,16 +44,21 @@ def settings(request):
     plugin = plugin_settings.get_self()
     enable_apcs = setting_handler.get_plugin_setting(plugin, 'enable_apcs', request.journal, create=True,
                                                      pretty='Enable APCs')
+    track_apcs = setting_handler.get_plugin_setting(plugin, 'track_apcs', request.journal, create=True,
+                                                    pretty='Track APCs')
 
     if request.POST:
         apc_post = request.POST.get('enable_apcs')
+        track_post = request.POST.get('track_apcs')
         setting_handler.save_plugin_setting(plugin, 'enable_apcs', apc_post, request.journal)
+        setting_handler.save_plugin_setting(plugin, 'track_apcs', track_post, request.journal)
         messages.add_message(request, messages.SUCCESS, 'Setting updated.')
         return redirect(reverse('apc_settings'))
 
     template = 'apc/settings.html'
     context = {
         'enable_apc': enable_apcs.value,
+        'track_apcs': track_apcs.value
     }
 
     return render(request, template, context)
