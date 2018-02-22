@@ -33,4 +33,6 @@ def install():
 def hook_registry():
     # On site load, the load function is run for each installed plugin to generate
     # a list of hooks.
-    pass
+    return {
+        'publication_fees': {'module': 'plugins.apc.hooks', 'function': 'publication_fees'},
+    }
