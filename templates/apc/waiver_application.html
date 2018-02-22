@@ -1,0 +1,80 @@
+{% extends "admin/core/base.html" %}
+{% load foundation %}
+
+{% block title %}APC Management{% endblock %}
+{% block title-section %}APC Management{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    <li><a href="{% url 'apc_index' %}">APC Management Plugin</a></li>
+    <li>Waiver Application #{{ application.pk }}</li>
+{% endblock breadcrumbs %}
+
+{% block body %}
+    <section class="content">
+        <div class="row expanded">
+            <div class="large-12 columns">
+                <div class="box">
+                    <div class="title-area">
+                        <h2>Manage Waiver Application for {{ application.article.title }}</h2>
+                    </div>
+                    <div class="content">
+                        <div class="row expanded">
+                            <div class="large-6 columns">
+                                <table class="small">
+                                    <tr>
+                                        <th colspan="2">Title</th>
+                                        <th>Lead Author</th>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">{{ application.article.title }}</td>
+                                        <td>{{ application.article.correspondence_author.full_name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Section</th>
+                                        <th>Language</th>
+                                        <th>Submitted</th>
+                                    </tr>
+                                    <tr>
+                                        <td>{{ application.article.section.name }}</td>
+                                        <td>{{ application.article.language }}</td>
+                                        <td>{{ application.article.date_submitted }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="1">APC</th>
+                                        <th colspan="2">Recorded</th>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="1">{{ application.article.articleapc.value }} {{ application.article.articleapc.currency }}</td>
+                                        <td colspan="2">{{ application.article.articleapc.recorded }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="3">Rationale</th>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3">{{ application.rationale|safe }}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="large-6 columns">
+                                <form method="POST">
+                                    {% csrf_token %}
+                                    {{ form|foundation }}
+                                    <p>If you waive the APC for this article it will be removed from the due list and
+                                        marked
+                                        as closed.</p>
+                                    <button name="action" value="waive" class="success button">Waive Fee</button>
+                                    <button name="action" value="decline" class="warning button">Decline Waiver</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block js %}
+{% include "elements/jqte.html" %}
+{% endblock %}

@@ -16,6 +16,7 @@ class WaiverApplicationAdmin(admin.ModelAdmin):
 admin_list = [
     (SectionAPC, SectionAPCAdmin),
     (WaiverApplication, WaiverApplicationAdmin),
+    (ArticleAPC,),
 ]
 
 [admin.site.register(*t) for t in admin_list]

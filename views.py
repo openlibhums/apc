@@ -1,6 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib import messages
+from django.utils import timezone
 
 from plugins.apc import plugin_settings, logic, forms, models
 from submission import models as submission_models
@@ -13,7 +14,8 @@ from utils import setting_handler
 def index(request):
     sections = submission_models.Section.objects.language().filter(
         journal=request.journal).prefetch_related('sectionapc')
-    waiver_applications = models.WaiverApplication.objects.filter(article__journal=request.journal)
+    waiver_applications = models.WaiverApplication.objects.filter(article__journal=request.journal,
+                                                                  reviewed__isnull=True)
     modal = None
 
     form = forms.APCForm()
@@ -52,6 +54,34 @@ def settings(request):
     template = 'apc/settings.html'
     context = {
         'enable_apc': enable_apcs.value,
+    }
+
+    return render(request, template, context)
+
+
+@has_journal
+@editor_user_required
+def waiver_application(request, application_id):
+    application = get_object_or_404(models.WaiverApplication,
+                                    pk=application_id,
+                                    article__journal=request.journal,
+                                    reviewed__isnull=True)
+    form = forms.WaiverResponse(instance=application)
+
+    if request.POST and 'action' in request.POST:
+        form = forms.WaiverResponse(request.POST, instance=application)
+
+        if form.is_valid():
+            application = form.save(commit=False)
+            application.status = logic.get_waiver_status_from_post(request.POST)
+            application.reviewed = timezone.now()
+            application.save()
+            return redirect(reverse('apc_index'))
+
+    template = 'apc/waiver_application.html'
+    context = {
+        'application': application,
+        'form': form,
     }
 
     return render(request, template, context)

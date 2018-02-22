@@ -13,3 +13,12 @@ def handle_set_apc(request, form):
         form = forms.APCForm(request.POST, instance=instance)
 
     return form.save(section=section)
+
+
+def get_waiver_status_from_post(post):
+    action = post.get('action')
+
+    if action == 'waive':
+        return 'accepted'
+
+    return 'declined'

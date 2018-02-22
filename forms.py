@@ -16,3 +16,10 @@ class APCForm(forms.ModelForm):
             section_apc.save()
 
         return section_apc
+
+
+class WaiverResponse(forms.ModelForm):
+
+    class Meta:
+        model = models.WaiverApplication
+        fields = ('response',)
