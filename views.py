@@ -5,7 +5,7 @@ from django.utils import timezone
 
 from plugins.apc import plugin_settings, logic, forms, models
 from submission import models as submission_models
-from security.decorators import has_journal, editor_user_required
+from security.decorators import has_journal, editor_user_required, article_author_required
 from utils import setting_handler
 
 
@@ -103,3 +103,9 @@ def waiver_application(request, application_id):
     }
 
     return render(request, template, context)
+
+
+@has_journal
+@article_author_required
+def make_waiver_application(request, article_id):
+    article = get_object_or_404(submission_models.Article, pk=article_id, journal=request.journal, )

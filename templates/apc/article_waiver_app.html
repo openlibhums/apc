@@ -1,0 +1,11 @@
+<div class="box">
+    <div class="title-area">
+        <h2>Waiver Application</h2>
+    </div>
+
+    {% if not article.waiverapplication %}
+    {{ waiver_text|safe }}
+
+    <a href="{% url 'apc_make_waiver_application' article.pk %}" class="success button">Apply for Waiver</a>
+    {% endif %}
+</div>

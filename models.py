@@ -41,7 +41,7 @@ class ArticleAPC(models.Model):
 
 
 class WaiverApplication(models.Model):
-    article = models.ForeignKey('submission.Article')
+    article = models.OneToOneField('submission.Article')
     reviewer = models.ForeignKey('core.Account', blank=True, null=True)
     status = models.CharField(max_length=25, choices=waiver_status_choices(), default='new')
     rationale = models.TextField(null=True)

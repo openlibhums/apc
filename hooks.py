@@ -36,3 +36,21 @@ def waiver_info(context):
         return render_to_string('apc/waiver_info.html', {'request': request, 'waiver_text': waiver_text.value})
     else:
         return ''
+
+
+def waiver_application(context):
+    plugin = plugin_settings.get_self()
+    request = context['request']
+    article = context['article']
+
+    waiver_text = setting_handler.get_plugin_setting(plugin, 'waiver_text', request.journal, create=True,
+                                                     pretty='Waiver Text')
+    enable_waivers = setting_handler.get_plugin_setting(plugin, 'enable_waivers', request.journal, create=True,
+                                                        pretty='Enable Waivers')
+
+    if enable_waivers.value == 'on':
+        return render_to_string('apc/article_waiver_app.html', {'request': request,
+                                                                'waiver_text': waiver_text.value,
+                                                                'article': article})
+    else:
+        return ''
