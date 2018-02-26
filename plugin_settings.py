@@ -35,4 +35,5 @@ def hook_registry():
     # a list of hooks.
     return {
         'publication_fees': {'module': 'plugins.apc.hooks', 'function': 'publication_fees'},
+        'submission_review': {'module': 'plugins.apc.hooks', 'function': 'waiver_info'},
     }

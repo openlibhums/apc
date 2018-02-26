@@ -21,3 +21,18 @@ def publication_fees(context):
         return ''
     elif enable_apcs.value == 'on':
         return render_to_string('apc/publication_fees.html', {'sections': sections})
+
+
+def waiver_info(context):
+    plugin = plugin_settings.get_self()
+    request = context['request']
+
+    waiver_text = setting_handler.get_plugin_setting(plugin, 'waiver_text', request.journal, create=True,
+                                                     pretty='Waiver Text')
+    enable_waivers = setting_handler.get_plugin_setting(plugin, 'enable_waivers', request.journal, create=True,
+                                                        pretty='Enable Waivers')
+
+    if enable_waivers.value == 'on':
+        return render_to_string('apc/waiver_info.html', {'request': request, 'waiver_text': waiver_text.value})
+    else:
+        return ''

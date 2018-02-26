@@ -18,21 +18,45 @@
                         <h2>Enable APCs for {{ request.journal.name }}</h2>
                     </div>
                     <div class="content">
-                        <form method="POST">
-                            {% csrf_token %}
-                            <label for="enable_apcs">Enable APC display on the Submission page and on the Submission
-                                Start page.
-                                <input type="checkbox" name="enable_apcs" id="enable_apcs" {% if enable_apc == 'on' %}checked="checked"{% endif %}>
-                            </label>
-                            <label for="track_apcs">Enable this function to track APCs but don't display info.
-                                Start page.
-                                <input type="checkbox" name="track_apcs" id="track_apcs" {% if track_apcs == 'on' %}checked="checked"{% endif %}>
-                            </label>
-                            <button name="save" class="success button">Save</button>
-                        </form>
+                        <div class="row expanded">
+                            <div class="large-8 columns">
+                                <form method="POST">
+                                    {% csrf_token %}
+                                    <h4>APCs</h4>
+                                    <label for="enable_apcs">Enable APC display on the Submission page and on the
+                                        Submission
+                                        Start page.
+                                        <input type="checkbox" name="enable_apcs" id="enable_apcs"
+                                               {% if enable_apc == 'on' %}checked="checked"{% endif %}>
+                                    </label>
+                                    <label for="track_apcs">Enable this function to track APCs but don't display info.
+                                        Start page.
+                                        <input type="checkbox" name="track_apcs" id="track_apcs"
+                                               {% if track_apcs == 'on' %}checked="checked"{% endif %}>
+                                    </label>
+                                    <hr/>
+                                    <h4>Waivers</h4>
+                                    <label for="enable_waivers">Enable the waiver application workflow, links are
+                                        displayed on the Submission Review page.
+                                        <input type="checkbox" name="enable_waivers" id="enable_waivers"
+                                               {% if enable_waivers == 'on' %}checked="checked"{% endif %}>
+                                    </label>
+
+                                    <label for="waiver_text">Waiver Application Text, displayed on the Submission Review
+                                        page.
+                                        <textarea name="waiver_text" id="waiver_text">{{ waiver_text|safe }}</textarea>
+                                    </label>
+                                    <button name="save" class="success button">Save</button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+{% endblock %}
+
+{% block js %}
+    {% include "elements/jqte.html" %}
 {% endblock %}
