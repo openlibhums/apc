@@ -47,7 +47,6 @@ def waiver_application(context):
                                                      pretty='Waiver Text')
     enable_waivers = setting_handler.get_plugin_setting(plugin, 'enable_waivers', request.journal, create=True,
                                                         pretty='Enable Waivers')
-
     if enable_waivers.value == 'on':
         return render_to_string('apc/article_waiver_app.html', {'request': request,
                                                                 'waiver_text': waiver_text.value,
