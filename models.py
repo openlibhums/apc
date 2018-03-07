@@ -44,7 +44,7 @@ class WaiverApplication(models.Model):
     article = models.OneToOneField('submission.Article')
     reviewer = models.ForeignKey('core.Account', blank=True, null=True)
     status = models.CharField(max_length=25, choices=waiver_status_choices(), default='new')
-    rationale = models.TextField(null=True)
+    rationale = models.TextField(null=True, verbose_name='Supporting Information')
 
     made = models.DateTimeField(default=timezone.now)
     reviewed = models.DateTimeField(blank=True, null=True)
@@ -55,3 +55,19 @@ class WaiverApplication(models.Model):
 
     def __str__(self):
         return 'Waiver for Article {pk} - {status}.'.format(pk=self.article.pk, status=self.status)
+
+    def complete_application(self, article):
+        self.article = article
+        self.save()
+
+    def reviewer_display(self):
+        if self.reviewer:
+            return self.reviewer.full_name()
+        else:
+            return 'No reviewer assigned.'
+
+    def reviewed_display(self):
+        if self.reviewed:
+            return self.reviewed
+        else:
+            return 'Waiver has not been reviewed.'

@@ -56,7 +56,6 @@ def settings(request):
         track_post = request.POST.get('track_apcs')
         text_post = request.POST.get('waiver_text')
         waivers_post = request.POST.get('enable_waivers')
-        print(text_post)
 
         setting_handler.save_plugin_setting(plugin, 'enable_apcs', apc_post, request.journal)
         setting_handler.save_plugin_setting(plugin, 'track_apcs', track_post, request.journal)
@@ -93,6 +92,7 @@ def waiver_application(request, application_id):
             application = form.save(commit=False)
             application.status = logic.get_waiver_status_from_post(request.POST)
             application.reviewed = timezone.now()
+            application.reviewer = request.user
             application.save()
             return redirect(reverse('apc_index'))
 
@@ -108,4 +108,22 @@ def waiver_application(request, application_id):
 @has_journal
 @article_author_required
 def make_waiver_application(request, article_id):
-    article = get_object_or_404(submission_models.Article, pk=article_id, journal=request.journal, )
+    article = get_object_or_404(submission_models.Article, pk=article_id, journal=request.journal,
+                                waiverapplication__isnull=True)
+    form = forms.WaiverApplication()
+
+    if request.POST:
+        form = forms.WaiverApplication(request.POST)
+
+        if form.is_valid():
+            waiver = form.save(commit=False)
+            waiver.complete_application(article)
+            return redirect(reverse('core_dashboard_article', kwargs={'article_id': article.pk}))
+
+    template = 'apc/make_waiver_application.html'
+    context = {
+        'article': article,
+        'form': form,
+    }
+
+    return render(request, template, context)

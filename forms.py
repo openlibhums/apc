@@ -23,3 +23,10 @@ class WaiverResponse(forms.ModelForm):
     class Meta:
         model = models.WaiverApplication
         fields = ('response',)
+
+
+class WaiverApplication(forms.ModelForm):
+
+    class Meta:
+        model = models.WaiverApplication
+        fields = ('rationale',)

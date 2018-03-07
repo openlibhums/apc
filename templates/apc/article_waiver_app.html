@@ -7,5 +7,24 @@
     {{ waiver_text|safe }}
 
     <a href="{% url 'apc_make_waiver_application' article.pk %}" class="success button">Apply for Waiver</a>
+        {% else %}
+        <p>This article has an active waiver request.</p>
+        <table>
+            <tr>
+                <th>Started</th>
+                <th>Status</th>
+                <th>Reviewer</th>
+                <th>Reviewed</th>
+                {% if article.waiverapplication.reviewed %}<th width="50%">Response</th>{% endif %}
+            </tr>
+            <tr>
+                <td>{{ article.waiverapplication.made }}</td>
+                <td>{{ article.waiverapplication.get_status_display }}</td>
+                <td>{{ article.waiverapplication.reviewer_display }}</td>
+                <td>{{ article.waiverapplication.reviewed_display }}</td>
+                {% if article.waiverapplication.reviewed %}<td>{{ article.waiverapplication.response|safe }}</td>{% endif %}
+            </tr>
+        </table>
     {% endif %}
+
 </div>
