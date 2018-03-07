@@ -13,10 +13,15 @@ class WaiverApplicationAdmin(admin.ModelAdmin):
     raw_id_fields = ('reviewer',)
 
 
+class ArticleAPCAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'article', 'value', 'currency', 'recorded', 'status')
+    list_filter = ('status', 'currency')
+
+
 admin_list = [
     (SectionAPC, SectionAPCAdmin),
     (WaiverApplication, WaiverApplicationAdmin),
-    (ArticleAPC,),
+    (ArticleAPC, ArticleAPCAdmin),
 ]
 
 [admin.site.register(*t) for t in admin_list]

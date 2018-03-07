@@ -1,7 +1,8 @@
 from django.shortcuts import get_object_or_404
+from django.contrib import messages
 
 from submission import models as submission_models
-from plugins.apc import forms
+from plugins.apc import forms, models
 
 
 def handle_set_apc(request, form):
@@ -22,3 +23,22 @@ def get_waiver_status_from_post(post):
         return 'accepted'
 
     return 'declined'
+
+
+def set_apc(**kwargs):
+    request = kwargs.get('request', None)
+    article = kwargs.get('article', None)
+
+    if request and article:
+        try:
+            section_apc = models.SectionAPC.objects.get(section=article.section)
+        except models.SectionAPC.DoesNotExist:
+            messages.add_message(request, messages.WARNING, 'APC Management is enabled but this section has no APC.')
+            return
+
+        models.ArticleAPC.objects.create(
+            article=article,
+            section_apc=section_apc,
+            value=section_apc.value,
+            currency=section_apc.currency,
+        )

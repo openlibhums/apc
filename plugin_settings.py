@@ -10,7 +10,9 @@ MANAGER_URL = 'apc_index'
 IS_WORKFLOW_PLUGIN = False
 
 
-from utils import models, setting_handler
+from plugins.apc import logic
+from utils import models
+from events import logic as event_logic
 
 
 def get_self():
@@ -38,3 +40,8 @@ def hook_registry():
         'submission_review': {'module': 'plugins.apc.hooks', 'function': 'waiver_info'},
         'core_article_footer': {'module': 'plugins.apc.hooks', 'function': 'waiver_application'}
     }
+
+
+def register_for_events():
+    event_logic.Events.register_for_event(event_logic.Events.ON_ARTICLE_SUBMITTED,
+                                          logic.set_apc)
