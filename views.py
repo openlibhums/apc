@@ -117,7 +117,7 @@ def make_waiver_application(request, article_id):
 
         if form.is_valid():
             waiver = form.save(commit=False)
-            waiver.complete_application(article)
+            waiver.complete_application(article, request)
             return redirect(reverse('core_dashboard_article', kwargs={'article_id': article.pk}))
 
     template = 'apc/make_waiver_application.html'

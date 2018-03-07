@@ -1,5 +1,8 @@
 from django.db import models
 from django.utils import timezone
+from django.urls import reverse
+
+from utils import notify_helpers
 
 
 def waiver_status_choices():
@@ -56,9 +59,19 @@ class WaiverApplication(models.Model):
     def __str__(self):
         return 'Waiver for Article {pk} - {status}.'.format(pk=self.article.pk, status=self.status)
 
-    def complete_application(self, article):
+    def complete_application(self, article, request):
         self.article = article
         self.save()
+
+        # Send email to editors
+        message = '<p>{user} has requested a waiver for {article}.</p>' \
+                  '<p><a href="{j_url}{w_url}">Waiver Management</a>'.format(user=request.user,
+                                                                             article=article.title,
+                                                                             j_url=request.journal_base_url,
+                                                                             w_url=reverse('apc_index'))
+        notify_helpers.send_email_with_body_from_user(request, 'New Waiver Application',
+                                                      request.journal.editor_emails,
+                                                      message)
 
     def reviewer_display(self):
         if self.reviewer:
