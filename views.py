@@ -34,10 +34,13 @@ def index(request):
         'waiver_applications': waiver_applications,
         'modal': modal,
         'articles_for_invoicing': models.ArticleAPC.objects.filter(article__date_accepted__isnull=False,
+                                                                   article__journal=request.journal,
                                                                    status='new'),
         'articles_paid': models.ArticleAPC.objects.filter(article__date_accepted__isnull=False,
+                                                          article__journal=request.journal,
                                                           status='paid'),
         'articles_unpaid': models.ArticleAPC.objects.filter(article__date_accepted__isnull=False,
+                                                            article__journal=request.journal,
                                                             status='nonpay')
     }
 
@@ -47,7 +50,7 @@ def index(request):
 @has_journal
 @editor_user_required
 def apc_action(request, apc_id, action):
-    apc = get_object_or_404(models.ArticleAPC, pk=apc_id)
+    apc = get_object_or_404(models.ArticleAPC, pk=apc_id, article__journal=request.journal)
 
     if request.POST and 'action' in request.POST:
         if action == 'paid':
