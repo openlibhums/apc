@@ -42,6 +42,21 @@ class ArticleAPC(models.Model):
     status = models.CharField(max_length=25, choices=apc_status_choices(), default='new')
     completed = models.DateTimeField(blank=True, null=True)
 
+    def mark_as_paid(self):
+        self.status = 'paid'
+        self.completed = timezone.now()
+        self.save()
+
+    def mark_as_unpaid(self):
+        self.status = 'nopay'
+        self.completed = timezone.now()
+        self.save()
+
+    def mark_as_new(self):
+        self.status = 'new'
+        self.completed = None
+        self.save()
+
 
 class WaiverApplication(models.Model):
     article = models.OneToOneField('submission.Article')

@@ -40,16 +40,23 @@
                                         <th>Published</th>
                                         <th>Section</th>
                                         <th>APC</th>
+                                        <th></th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     {% for apc in articles_for_invoicing %}
                                         <tr>
-                                            <td>{{ apc.article.title|safe }}</td>
+                                            <td>
+                                                <a href="{% url 'manage_archive_article' apc.article.pk %}">{{ apc.article.title|safe }}</a>
+                                            </td>
                                             <td>{{ apc.article.date_accepted }}</td>
                                             <td>{{ apc.article.date_published }}</td>
                                             <td>{{ apc.article.section.name }}</td>
                                             <td>{{ apc.value }} {{ apc.currency }}</td>
+                                            <td><a href="{% url 'apc_action' apc.pk 'paid' %}"
+                                                   class="tiny success button">Mark as Paid</a><a
+                                                    href="{% url 'apc_action' apc.pk 'unpaid' %}"
+                                                    class="tiny warning button">Mark as Unpaid</a></td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>
@@ -62,19 +69,25 @@
                                     <tr>
                                         <th>Title</th>
                                         <th>Date Accepted</th>
-                                        <th>Published</th>
+                                        <th>Paid</th>
                                         <th>Section</th>
                                         <th>APC</th>
+                                        <th></th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     {% for apc in articles_paid %}
                                         <tr>
-                                            <td>{{ apc.article.title|safe }}</td>
+                                            <td>
+                                                <a href="{% url 'manage_archive_article' apc.article.pk %}">{{ apc.article.title|safe }}</a>
+                                            </td>
                                             <td>{{ apc.article.date_accepted }}</td>
-                                            <td>{{ apc.article.date_published }}</td>
+                                            <td>{{ apc.completed }}</td>
                                             <td>{{ apc.article.section.name }}</td>
                                             <td>{{ apc.value }} {{ apc.currency }}</td>
+                                            <td><a href="{% url 'apc_action' apc.pk 'new' %}"
+                                                   class="tiny success button">Mark as New</a>
+                                            </td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>
@@ -82,7 +95,7 @@
                             </div>
 
                             <div class="tabs-panel" id="tab-nonpay">
-                                 <table class="apctable">
+                                <table class="apctable">
                                     <thead>
                                     <tr>
                                         <th>Title</th>
@@ -90,16 +103,22 @@
                                         <th>Published</th>
                                         <th>Section</th>
                                         <th>APC</th>
+                                        <th></th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     {% for apc in articles_unpaid %}
                                         <tr>
-                                            <td>{{ apc.article.title|safe }}</td>
+                                            <td>
+                                                <a href="{% url 'manage_archive_article' apc.article.pk %}">{{ apc.article.title|safe }}</a>
+                                            </td>
                                             <td>{{ apc.article.date_accepted }}</td>
                                             <td>{{ apc.article.date_published }}</td>
                                             <td>{{ apc.article.section.name }}</td>
                                             <td>{{ apc.value }} {{ apc.currency }}</td>
+                                            <td><a href="{% url 'apc_action' apc.pk 'new' %}"
+                                                   class="tiny success button">Mark as New</a>
+                                            </td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>
@@ -111,7 +130,7 @@
             </div>
         </div>
         <div class="row expanded" data-equalizer>
-            <div class="large-6 columns" >
+            <div class="large-6 columns">
                 <div class="box" data-equalizer-watch>
                     <div class="title-area">
                         <h2>Waiver Applications</h2>
@@ -120,13 +139,16 @@
                     <div class="content">
                         <table class="apctable">
                             <thead>
-                                <th>Article</th>
-                                <th>Status</th>
-                                <th>Started</th>
+                            <th>Article</th>
+                            <th>Status</th>
+                            <th>Started</th>
                             </thead>
                             <tbody>
-                                {% for application in waiver_applications %}<tr>
-                                    <td><a href="{% url 'apc_waiver_application' application.pk %}">{{ application.article.title }}</a></td>
+                            {% for application in waiver_applications %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'apc_waiver_application' application.pk %}">{{ application.article.title }}</a>
+                                    </td>
                                     <td>{{ application.get_status_display }}</td>
                                     <td>{{ application.made }}</td>
                                 </tr>{% endfor %}
@@ -135,7 +157,7 @@
                     </div>
                 </div>
             </div>
-            <div class="large-6 columns" >
+            <div class="large-6 columns">
                 <div class="box" data-equalizer-watch>
                     <div class="title-area">
                         <h2>Sections</h2>
@@ -143,16 +165,21 @@
                     <div class="content">
                         <table id="test" class="apctable">
                             <thead>
-                                <th>Name</th>
-                                <th>Submission</th>
-                                <th>APC Set</th>
+                            <th>Name</th>
+                            <th>Submission</th>
+                            <th>APC Set</th>
                             </thead>
                             <tbody>
-                            {% for section in sections %}<tr>
-                                <td><a href="#" data-open="set_apc_{{ section.pk }}">{{ section.name }}</a></td>
-                                <td><i class={% if section.public_submissions %}"fa fa-check-circle-o" class="green"{% else %}"fa fa-times-circle-o" class="red"{% endif %}></i></td>
-                                <td><i class={% if section.sectionapc %}"fa fa-check-circle-o" class="green"{% else %}"fa fa-times-circle-o" class="red"{% endif %}></i></td>
-                            </tr>{% endfor %}
+                            {% for section in sections %}
+                                <tr>
+                                    <td><a href="#" data-open="set_apc_{{ section.pk }}">{{ section.name }}</a></td>
+                                    <td><i class={% if section.public_submissions %}"fa fa-check-circle-o"
+                                           class="green"{% else %}"fa fa-times-circle-o" class="red"{% endif %}></i>
+                                    </td>
+                                    <td><i class={% if section.sectionapc %}"fa fa-check-circle-o"
+                                           class="green"{% else %}"fa fa-times-circle-o" class="red"{% endif %}></i>
+                                    </td>
+                                </tr>{% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -162,7 +189,7 @@
     </section>
 
     {% for section in sections %}
-    {% include "apc/set_apc.html" %}
+        {% include "apc/set_apc.html" %}
     {% endfor %}
 {% endblock %}
 

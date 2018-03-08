@@ -46,6 +46,37 @@ def index(request):
 
 @has_journal
 @editor_user_required
+def apc_action(request, apc_id, action):
+    apc = get_object_or_404(models.ArticleAPC, pk=apc_id)
+
+    if request.POST and 'action' in request.POST:
+        if action == 'paid':
+            apc.mark_as_paid()
+        elif action == 'unpaid':
+            apc.mark_as_unpaid()
+        elif action == 'new':
+            apc.mark_as_new()
+        else:
+            messages.add_message(request, messages.ERROR, 'No suitable action found.')
+        messages.add_message(request, messages.SUCCESS, 'APC Updated')
+
+        return redirect(reverse('apc_index'))
+
+    elif action in ['paid', 'unpaid'] and apc.completed:
+        messages.add_message(request, messages.ERROR, 'APC has already been completed.')
+        return redirect(reverse('apc_index'))
+
+    template = 'apc/apc_action.html'
+    context = {
+        'apc': apc,
+        'action': action,
+    }
+
+    return render(request, template, context)
+
+
+@has_journal
+@editor_user_required
 def settings(request):
     plugin = plugin_settings.get_self()
     enable_apcs = setting_handler.get_plugin_setting(plugin, 'enable_apcs', request.journal, create=True,
