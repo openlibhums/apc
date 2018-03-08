@@ -34,7 +34,9 @@ def index(request):
         'waiver_applications': waiver_applications,
         'modal': modal,
         'articles_for_invoicing': models.ArticleAPC.objects.filter(article__date_accepted__isnull=False,
-                                                                   status='new')
+                                                                   status='new'),
+        'articles_paid': models.ArticleAPC.objects.filter(article__date_accepted__isnull=False,
+                                                          status='paid')
     }
 
     return render(request, template, context)
