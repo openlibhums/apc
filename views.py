@@ -36,7 +36,9 @@ def index(request):
         'articles_for_invoicing': models.ArticleAPC.objects.filter(article__date_accepted__isnull=False,
                                                                    status='new'),
         'articles_paid': models.ArticleAPC.objects.filter(article__date_accepted__isnull=False,
-                                                          status='paid')
+                                                          status='paid'),
+        'articles_unpaid': models.ArticleAPC.objects.filter(article__date_accepted__isnull=False,
+                                                            status='nonpay')
     }
 
     return render(request, template, context)
