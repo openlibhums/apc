@@ -61,5 +61,5 @@ def set_apc(**kwargs):
                     value=section_apc.value,
                     currency=section_apc.currency,
                 )
-        except ObjectDoesNotExist:
+        except (ObjectDoesNotExist, IndexError):
             pass
