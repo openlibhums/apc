@@ -31,6 +31,13 @@ class SectionAPC(models.Model):
     class Meta:
         ordering = ('section__journal', 'value', 'currency')
 
+    def __str__(self):
+        return '{0} {1} {2}'.format(
+            self.section,
+            self.value,
+            self.currency
+        )
+
 
 class ArticleAPC(models.Model):
     article = models.OneToOneField('submission.Article')

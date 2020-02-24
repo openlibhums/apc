@@ -4,8 +4,11 @@ from plugins.apc.models import *
 
 
 class SectionAPCAdmin(admin.ModelAdmin):
-    list_display = ('section', 'value', 'currency')
+    list_display = ('section_name', 'value', 'currency')
     list_filter = ('currency',)
+
+    def section_name(self, obj):
+        return obj.section.name
 
 
 class WaiverApplicationAdmin(admin.ModelAdmin):
@@ -16,6 +19,7 @@ class WaiverApplicationAdmin(admin.ModelAdmin):
 class ArticleAPCAdmin(admin.ModelAdmin):
     list_display = ('pk', 'article', 'value', 'currency', 'recorded', 'status')
     list_filter = ('status', 'currency')
+    raw_id_fields = ('article', 'section_apc')
 
 
 admin_list = [
