@@ -33,26 +33,28 @@ def index(request):
         else:
             modal = request.POST.get('section')
 
+    article_apcs = models.ArticleAPC.objects.filter(
+        article__journal=request.journal,
+        article__date_accepted__isnull=False
+    )
+
     template = 'apc/index.html'
     context = {
         'sections': sections,
         'form': form,
         'waiver_applications': waiver_applications,
         'modal': modal,
-        'articles_for_invoicing': models.ArticleAPC.objects.filter(
-            article__date_accepted__isnull=False,
-            article__journal=request.journal,
+        'articles_for_invoicing': article_apcs.filter(
             status='new',
         ),
-        'articles_paid': models.ArticleAPC.objects.filter(
-            article__date_accepted__isnull=False,
-            article__journal=request.journal,
+        'articles_paid': article_apcs.filter(
             status='paid',
         ),
-        'articles_unpaid': models.ArticleAPC.objects.filter(
-            article__date_accepted__isnull=False,
-            article__journal=request.journal,
+        'articles_unpaid': article_apcs.filter(
             status='nonpay',
+        ),
+        'articles_invoiced': article_apcs.filter(
+            status='invoiced',
         )
     }
 
@@ -75,13 +77,19 @@ def apc_action(request, apc_id, action):
             apc.mark_as_unpaid()
         elif action == 'new':
             apc.mark_as_new()
+        elif action == 'invoiced':
+            apc.mark_as_invoiced()
         else:
             messages.add_message(
                 request,
                 messages.ERROR,
                 'No suitable action found.',
             )
-        messages.add_message(request, messages.SUCCESS, 'APC Updated')
+        messages.add_message(
+            request,
+            messages.SUCCESS,
+            'APC Updated',
+        )
 
         return redirect(reverse('apc_index'))
 
@@ -229,7 +237,7 @@ def make_waiver_application(request, article_id):
             waiver.complete_application(article, request)
             return redirect(
                 reverse(
-                    'core_dashboard_article', 
+                    'core_dashboard_article',
                     kwargs={'article_id': article.pk},
                 )
             )

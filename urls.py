@@ -14,7 +14,7 @@ urlpatterns = [
     ),
     url(r'^settings/$', views.settings, name='apc_settings'),
 
-    url(r'^(?P<apc_id>\d+)/action/(?P<action>paid|unpaid|new)/$',
+    url(r'^(?P<apc_id>\d+)/action/(?P<action>paid|unpaid|new|invoiced)/$',
         views.apc_action,
         name='apc_action',
     ),
