@@ -45,11 +45,11 @@ def hook_registry():
     """
     return {
         'publication_fees':
-        {'module': 'plugins.apc.hooks', 'function': 'publication_fees'},
+            {'module': 'plugins.apc.hooks', 'function': 'publication_fees'},
         'submission_review':
-        {'module': 'plugins.apc.hooks', 'function': 'waiver_info'},
+            {'module': 'plugins.apc.hooks', 'function': 'waiver_info'},
         'core_article_footer':
-        {'module': 'plugins.apc.hooks', 'function': 'waiver_application'},
+            {'module': 'plugins.apc.hooks', 'function': 'waiver_application'},
     }
 
 
