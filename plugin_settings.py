@@ -49,7 +49,7 @@ def hook_registry():
         'submission_review':
         {'module': 'plugins.apc.hooks', 'function': 'waiver_info'},
         'core_article_footer':
-        {'module': 'plugins.apc.hooks', 'function': 'waiver_application'}
+        {'module': 'plugins.apc.hooks', 'function': 'waiver_application'},
     }
 
 
