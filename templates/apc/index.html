@@ -24,6 +24,9 @@
                                 <a href="#tab-ready" aria-selected="true">Ready for Invoicing</a>
                             </li>
                             <li class="tabs-title">
+                                <a href="#tab-invoiced" aria-selected="true">Invoiced</a>
+                            </li>
+                            <li class="tabs-title">
                                 <a href="#tab-paid" aria-selected="true">Paid</a>
                             </li>
                             <li class="tabs-title">
@@ -45,6 +48,40 @@
                                     </thead>
                                     <tbody>
                                     {% for apc in articles_for_invoicing %}
+                                        <tr>
+                                            <td>
+                                                <a href="{% url 'manage_archive_article' apc.article.pk %}">{{ apc.article.title|safe }}</a>
+                                            </td>
+                                            <td>{{ apc.article.date_accepted }}</td>
+                                            <td>{{ apc.article.date_published }}</td>
+                                            <td>{{ apc.article.section.name }}</td>
+                                            <td>{{ apc.value }} {{ apc.currency }}</td>
+                                            <td><a href="{% url 'apc_action' apc.pk 'paid' %}"
+                                                   class="tiny success button">Mark as Paid</a><a
+                                                    href="{% url 'apc_action' apc.pk 'unpaid' %}"
+                                                    class="tiny warning button">Mark as Unpaid</a><a
+                                                    href="{% url 'apc_action' apc.pk 'invoiced' %}"
+                                                    class="tiny alert button">Mark as Invoiced</a></td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="tabs-panel" id="tab-invoiced">
+                                <table class="apctable">
+                                    <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Date Accepted</th>
+                                        <th>Published</th>
+                                        <th>Section</th>
+                                        <th>APC</th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for apc in articles_invoiced %}
                                         <tr>
                                             <td>
                                                 <a href="{% url 'manage_archive_article' apc.article.pk %}">{{ apc.article.title|safe }}</a>

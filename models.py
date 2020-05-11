@@ -18,6 +18,7 @@ def apc_status_choices():
     return (
         ('new', 'New'),
         ('waived', 'Waived'),
+        ('invoiced', 'Invoiced'),
         ('paid', 'Paid'),
         ('nonpay', 'Non Payment'),
     )
@@ -65,6 +66,7 @@ class ArticleAPC(models.Model):
         choices=apc_status_choices(),
         default='new',
     )
+    invoiced = models.DateTimeField(blank=True, null=True)
     completed = models.DateTimeField(blank=True, null=True)
 
     def mark_as_paid(self):
@@ -75,6 +77,11 @@ class ArticleAPC(models.Model):
     def mark_as_unpaid(self):
         self.status = 'nonpay'
         self.completed = timezone.now()
+        self.save()
+
+    def mark_as_invoiced(self):
+        self.status = 'invoiced'
+        self.invoiced = timezone.now()
         self.save()
 
     def mark_as_new(self):
