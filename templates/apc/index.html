@@ -35,12 +35,13 @@
                         </ul>
                         <div class="tabs-content" data-tabs-content="round-tabs">
                             <div class="tabs-panel" id="tab-ready">
-                                <table class="apctable">
+                                <table class="apctable table small">
                                     <thead>
                                     <tr>
                                         <th>Title</th>
                                         <th>Date Accepted</th>
                                         <th>Published</th>
+                                        <th>Main Author</th>
                                         <th>Section</th>
                                         <th>APC</th>
                                         <th></th>
@@ -54,6 +55,7 @@
                                             </td>
                                             <td>{{ apc.article.date_accepted }}</td>
                                             <td>{{ apc.article.date_published }}</td>
+                                            <td>{{ apc.article.correspondence_author.full_name }}</td>
                                             <td>{{ apc.article.section.name }}</td>
                                             <td>{{ apc.value }} {{ apc.currency }}</td>
                                             <td><a href="{% url 'apc_action' apc.pk 'paid' %}"
@@ -69,12 +71,14 @@
                             </div>
 
                             <div class="tabs-panel" id="tab-invoiced">
-                                <table class="apctable">
+                                <table class="apctable table small">
                                     <thead>
                                     <tr>
                                         <th>Title</th>
                                         <th>Date Accepted</th>
                                         <th>Published</th>
+                                        <th>Main Author</th>
+                                        <th>Invoiced</th>
                                         <th>Section</th>
                                         <th>APC</th>
                                         <th></th>
@@ -88,6 +92,8 @@
                                             </td>
                                             <td>{{ apc.article.date_accepted }}</td>
                                             <td>{{ apc.article.date_published }}</td>
+                                            <td>{{ apc.article.correspondence_author.full_name }}</td>
+                                            <td>{{ apc.invoiced }}</td>
                                             <td>{{ apc.article.section.name }}</td>
                                             <td>{{ apc.value }} {{ apc.currency }}</td>
                                             <td><a href="{% url 'apc_action' apc.pk 'paid' %}"
@@ -101,11 +107,13 @@
                             </div>
 
                             <div class="tabs-panel" id="tab-paid">
-                                <table class="apctable">
+                                <table class="apctable table small">
                                     <thead>
                                     <tr>
                                         <th>Title</th>
                                         <th>Date Accepted</th>
+                                        <th>Main Author</th>
+                                        <th>Invoiced</th>
                                         <th>Paid</th>
                                         <th>Section</th>
                                         <th>APC</th>
@@ -119,6 +127,8 @@
                                                 <a href="{% url 'manage_archive_article' apc.article.pk %}">{{ apc.article.title|safe }}</a>
                                             </td>
                                             <td>{{ apc.article.date_accepted }}</td>
+                                            <td>{{ apc.article.correspondence_author.full_name }}</td>
+                                            <td>{{ apc.invoiced }}</td>
                                             <td>{{ apc.completed }}</td>
                                             <td>{{ apc.article.section.name }}</td>
                                             <td>{{ apc.value }} {{ apc.currency }}</td>
@@ -132,11 +142,13 @@
                             </div>
 
                             <div class="tabs-panel" id="tab-nonpay">
-                                <table class="apctable">
+                                <table class="apctable table small">
                                     <thead>
                                     <tr>
                                         <th>Title</th>
                                         <th>Date Accepted</th>
+                                        <th>Main Author</th>
+                                        <th>Invoiced</th>
                                         <th>Published</th>
                                         <th>Section</th>
                                         <th>APC</th>
@@ -150,6 +162,8 @@
                                                 <a href="{% url 'manage_archive_article' apc.article.pk %}">{{ apc.article.title|safe }}</a>
                                             </td>
                                             <td>{{ apc.article.date_accepted }}</td>
+                                            <td>{{ apc.article.correspondence_author.full_name }}</td>
+                                            <td>{{ apc.invoiced }}</td>
                                             <td>{{ apc.article.date_published }}</td>
                                             <td>{{ apc.article.section.name }}</td>
                                             <td>{{ apc.value }} {{ apc.currency }}</td>
@@ -174,7 +188,7 @@
                         <a href="/admin/apc/waiverapplication/" class="button">Waiver Admin</a>
                     </div>
                     <div class="content">
-                        <table class="apctable">
+                        <table class="apctable table small">
                             <thead>
                             <th>Article</th>
                             <th>Status</th>
@@ -200,7 +214,7 @@
                         <h2>Sections</h2>
                     </div>
                     <div class="content">
-                        <table id="test" class="apctable">
+                        <table id="test" class="apctable table small">
                             <thead>
                             <th>Name</th>
                             <th>Submission</th>
