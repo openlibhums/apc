@@ -5,7 +5,11 @@ from django.utils import timezone
 
 from plugins.apc import plugin_settings, logic, forms, models
 from submission import models as submission_models
-from security.decorators import has_journal, editor_user_required, article_author_required
+from security.decorators import (
+    has_journal,
+    editor_user_required,
+    article_author_required,
+)
 from utils import setting_handler
 
 
@@ -14,8 +18,10 @@ from utils import setting_handler
 def index(request):
     sections = submission_models.Section.objects.language().filter(
         journal=request.journal).prefetch_related('sectionapc')
-    waiver_applications = models.WaiverApplication.objects.filter(article__journal=request.journal,
-                                                                  reviewed__isnull=True)
+    waiver_applications = models.WaiverApplication.objects.filter(
+        article__journal=request.journal,
+        reviewed__isnull=True,
+    )
     modal = None
 
     form = forms.APCForm()
@@ -33,15 +39,21 @@ def index(request):
         'form': form,
         'waiver_applications': waiver_applications,
         'modal': modal,
-        'articles_for_invoicing': models.ArticleAPC.objects.filter(article__date_accepted__isnull=False,
-                                                                   article__journal=request.journal,
-                                                                   status='new'),
-        'articles_paid': models.ArticleAPC.objects.filter(article__date_accepted__isnull=False,
-                                                          article__journal=request.journal,
-                                                          status='paid'),
-        'articles_unpaid': models.ArticleAPC.objects.filter(article__date_accepted__isnull=False,
-                                                            article__journal=request.journal,
-                                                            status='nonpay')
+        'articles_for_invoicing': models.ArticleAPC.objects.filter(
+            article__date_accepted__isnull=False,
+            article__journal=request.journal,
+            status='new',
+        ),
+        'articles_paid': models.ArticleAPC.objects.filter(
+            article__date_accepted__isnull=False,
+            article__journal=request.journal,
+            status='paid',
+        ),
+        'articles_unpaid': models.ArticleAPC.objects.filter(
+            article__date_accepted__isnull=False,
+            article__journal=request.journal,
+            status='nonpay',
+        )
     }
 
     return render(request, template, context)
@@ -50,7 +62,11 @@ def index(request):
 @has_journal
 @editor_user_required
 def apc_action(request, apc_id, action):
-    apc = get_object_or_404(models.ArticleAPC, pk=apc_id, article__journal=request.journal)
+    apc = get_object_or_404(
+        models.ArticleAPC,
+        pk=apc_id,
+        article__journal=request.journal,
+    )
 
     if request.POST and 'action' in request.POST:
         if action == 'paid':
@@ -60,13 +76,21 @@ def apc_action(request, apc_id, action):
         elif action == 'new':
             apc.mark_as_new()
         else:
-            messages.add_message(request, messages.ERROR, 'No suitable action found.')
+            messages.add_message(
+                request,
+                messages.ERROR,
+                'No suitable action found.',
+            )
         messages.add_message(request, messages.SUCCESS, 'APC Updated')
 
         return redirect(reverse('apc_index'))
 
     elif action in ['paid', 'unpaid'] and apc.completed:
-        messages.add_message(request, messages.ERROR, 'APC has already been completed.')
+        messages.add_message(
+            request,
+            messages.ERROR,
+            'APC has already been completed.',
+        )
         return redirect(reverse('apc_index'))
 
     template = 'apc/apc_action.html'
@@ -82,14 +106,34 @@ def apc_action(request, apc_id, action):
 @editor_user_required
 def settings(request):
     plugin = plugin_settings.get_self()
-    enable_apcs = setting_handler.get_plugin_setting(plugin, 'enable_apcs', request.journal, create=True,
-                                                     pretty='Enable APCs')
-    track_apcs = setting_handler.get_plugin_setting(plugin, 'track_apcs', request.journal, create=True,
-                                                    pretty='Track APCs')
-    waiver_text = setting_handler.get_plugin_setting(plugin, 'waiver_text', request.journal, create=True,
-                                                     pretty='Waiver Text')
-    enable_waivers = setting_handler.get_plugin_setting(plugin, 'enable_waivers', request.journal, create=True,
-                                                        pretty='Enable Waivers')
+    enable_apcs = setting_handler.get_plugin_setting(
+        plugin,
+        'enable_apcs',
+        request.journal,
+        create=True,
+        pretty='Enable APCs',
+    )
+    track_apcs = setting_handler.get_plugin_setting(
+        plugin,
+        'track_apcs',
+        request.journal,
+        create=True,
+        pretty='Track APCs',
+    )
+    waiver_text = setting_handler.get_plugin_setting(
+        plugin,
+        'waiver_text',
+        request.journal,
+        create=True,
+        pretty='Waiver Text',
+    )
+    enable_waivers = setting_handler.get_plugin_setting(
+        plugin,
+        'enable_waivers',
+        request.journal,
+        create=True,
+        pretty='Enable Waivers',
+    )
 
     if request.POST:
         apc_post = request.POST.get('enable_apcs')
@@ -97,10 +141,30 @@ def settings(request):
         text_post = request.POST.get('waiver_text')
         waivers_post = request.POST.get('enable_waivers')
 
-        setting_handler.save_plugin_setting(plugin, 'enable_apcs', apc_post, request.journal)
-        setting_handler.save_plugin_setting(plugin, 'track_apcs', track_post, request.journal)
-        setting_handler.save_plugin_setting(plugin, 'waiver_text', text_post, request.journal)
-        setting_handler.save_plugin_setting(plugin, 'enable_waivers', waivers_post, request.journal)
+        setting_handler.save_plugin_setting(
+            plugin,
+            'enable_apcs',
+            apc_post,
+            request.journal,
+        )
+        setting_handler.save_plugin_setting(
+            plugin,
+            'track_apcs',
+            track_post,
+            request.journal,
+        )
+        setting_handler.save_plugin_setting(
+            plugin,
+            'waiver_text',
+            text_post,
+            request.journal,
+        )
+        setting_handler.save_plugin_setting(
+            plugin,
+            'enable_waivers',
+            waivers_post,
+            request.journal,
+        )
 
         messages.add_message(request, messages.SUCCESS, 'Setting updated.')
         return redirect(reverse('apc_settings'))
@@ -130,7 +194,9 @@ def waiver_application(request, application_id):
 
         if form.is_valid():
             application = form.save(commit=False)
-            application.status = logic.get_waiver_status_from_post(request.POST)
+            application.status = logic.get_waiver_status_from_post(
+                request.POST,
+            )
             application.reviewed = timezone.now()
             application.reviewer = request.user
             application.save()
@@ -148,8 +214,11 @@ def waiver_application(request, application_id):
 @has_journal
 @article_author_required
 def make_waiver_application(request, article_id):
-    article = get_object_or_404(submission_models.Article, pk=article_id, journal=request.journal,
-                                waiverapplication__isnull=True)
+    article = get_object_or_404(
+        submission_models.Article,
+        pk=article_id, journal=request.journal,
+        waiverapplication__isnull=True,
+    )
     form = forms.WaiverApplication()
 
     if request.POST:
@@ -158,7 +227,12 @@ def make_waiver_application(request, article_id):
         if form.is_valid():
             waiver = form.save(commit=False)
             waiver.complete_application(article, request)
-            return redirect(reverse('core_dashboard_article', kwargs={'article_id': article.pk}))
+            return redirect(
+                reverse(
+                    'core_dashboard_article', 
+                    kwargs={'article_id': article.pk},
+                )
+            )
 
     template = 'apc/make_waiver_application.html'
     context = {

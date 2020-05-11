@@ -9,7 +9,11 @@ from utils import setting_handler
 
 def handle_set_apc(request, form):
     section_id = request.POST.get('section')
-    section = get_object_or_404(submission_models.Section, pk=section_id, journal=request.journal)
+    section = get_object_or_404(
+        submission_models.Section,
+        pk=section_id,
+        journal=request.journal,
+    )
 
     if hasattr(section, 'sectionapc'):
         instance = section.sectionapc

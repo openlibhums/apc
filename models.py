@@ -25,8 +25,15 @@ def apc_status_choices():
 
 class SectionAPC(models.Model):
     section = models.OneToOneField('submission.Section')
-    value = models.DecimalField(max_digits=6, decimal_places=2, help_text='Decimal with two places eg. 200.00')
-    currency = models.CharField(max_length=25, help_text='The currency of the APC value eg. GBP or USD.')
+    value = models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        help_text='Decimal with two places eg. 200.00',
+    )
+    currency = models.CharField(
+        max_length=25,
+        help_text='The currency of the APC value eg. GBP or USD.',
+    )
 
     class Meta:
         ordering = ('section__journal', 'value', 'currency')
@@ -42,11 +49,22 @@ class SectionAPC(models.Model):
 class ArticleAPC(models.Model):
     article = models.OneToOneField('submission.Article')
     section_apc = models.ForeignKey(SectionAPC)
-    value = models.DecimalField(max_digits=6, decimal_places=2, help_text='Decimal with two places eg. 200.00')
-    currency = models.CharField(max_length=25, help_text='The currency of the APC value eg. GBP or USD.')
+    value = models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        help_text='Decimal with two places eg. 200.00',
+    )
+    currency = models.CharField(
+        max_length=25,
+        help_text='The currency of the APC value eg. GBP or USD.',
+    )
     recorded = models.DateTimeField(default=timezone.now)
 
-    status = models.CharField(max_length=25, choices=apc_status_choices(), default='new')
+    status = models.CharField(
+        max_length=25,
+        choices=apc_status_choices(),
+        default='new',
+    )
     completed = models.DateTimeField(blank=True, null=True)
 
     def mark_as_paid(self):
@@ -55,7 +73,7 @@ class ArticleAPC(models.Model):
         self.save()
 
     def mark_as_unpaid(self):
-        self.status = 'nopay'
+        self.status = 'nonpay'
         self.completed = timezone.now()
         self.save()
 
@@ -68,8 +86,15 @@ class ArticleAPC(models.Model):
 class WaiverApplication(models.Model):
     article = models.OneToOneField('submission.Article')
     reviewer = models.ForeignKey('core.Account', blank=True, null=True)
-    status = models.CharField(max_length=25, choices=waiver_status_choices(), default='new')
-    rationale = models.TextField(null=True, verbose_name='Supporting Information')
+    status = models.CharField(
+        max_length=25,
+        choices=waiver_status_choices(),
+        default='new',
+    )
+    rationale = models.TextField(
+        null=True,
+        verbose_name='Supporting Information',
+    )
 
     made = models.DateTimeField(default=timezone.now)
     reviewed = models.DateTimeField(blank=True, null=True)
@@ -79,7 +104,10 @@ class WaiverApplication(models.Model):
         ordering = ('made', 'status')
 
     def __str__(self):
-        return 'Waiver for Article {pk} - {status}.'.format(pk=self.article.pk, status=self.status)
+        return 'Waiver for Article {pk} - {status}.'.format(
+            pk=self.article.pk,
+            status=self.status,
+        )
 
     def complete_application(self, article, request):
         self.article = article
@@ -87,13 +115,18 @@ class WaiverApplication(models.Model):
 
         # Send email to editors
         message = '<p>{user} has requested a waiver for {article}.</p>' \
-                  '<p><a href="{j_url}{w_url}">Waiver Management</a>'.format(user=request.user,
-                                                                             article=article.title,
-                                                                             j_url=request.journal_base_url,
-                                                                             w_url=reverse('apc_index'))
-        notify_helpers.send_email_with_body_from_user(request, 'New Waiver Application',
-                                                      request.journal.editor_emails,
-                                                      message)
+                  '<p><a href="{j_url}{w_url}">Waiver Management</a>'.format(
+                      user=request.user,
+                      article=article.title,
+                      j_url=request.journal_base_url,
+                      w_url=reverse('apc_index'),
+                  )
+        notify_helpers.send_email_with_body_from_user(
+            request,
+            'New Waiver Application',
+            request.journal.editor_emails,
+            message,
+        )
 
     def reviewer_display(self):
         if self.reviewer:
