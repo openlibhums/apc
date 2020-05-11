@@ -45,7 +45,13 @@ def set_apc(**kwargs):
                 request.journal,
             )
 
-            if enable_apcs.processed_value:
+            track_apcs = setting_handler.get_plugin_setting(
+                plugin,
+                'track_apcs',
+                request.journal,
+            )
+
+            if enable_apcs.processed_value or track_apcs.processed_value:
 
                 try:
                     section_apc = models.SectionAPC.objects.get(
