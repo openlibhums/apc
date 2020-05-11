@@ -146,3 +146,17 @@ class WaiverApplication(models.Model):
             return self.reviewed
         else:
             return 'Waiver has not been reviewed.'
+
+
+class BillingStaffer(models.Model):
+    journal = models.ForeignKey('journal.Journal')
+    staffer = models.ForeignKey('core.Account')
+    recieves_notifications = models.BooleanField(default=True)
+
+    def __str__(self):
+        "[{code}] - {staffer} ({active})".format(
+            code=self.journal.code,
+            staffer=self.staffer.full_name,
+            active=self.recieves_notifications,
+        )
+

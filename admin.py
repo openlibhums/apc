@@ -22,10 +22,17 @@ class ArticleAPCAdmin(admin.ModelAdmin):
     raw_id_fields = ('article', 'section_apc')
 
 
+class BillingStafferAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'journal', 'staffer', 'recieves_notifications')
+    list_filter = ('journal', 'staffer', 'recieves_notifications')
+    raw_id_fields = ('journal', 'staffer')
+
+
 admin_list = [
     (SectionAPC, SectionAPCAdmin),
     (WaiverApplication, WaiverApplicationAdmin),
     (ArticleAPC, ArticleAPCAdmin),
+    (BillingStaffer, BillingStafferAdmin),
 ]
 
 [admin.site.register(*t) for t in admin_list]
