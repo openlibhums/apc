@@ -67,3 +67,16 @@ def set_apc(**kwargs):
                 )
         except (ObjectDoesNotExist, IndexError):
             pass
+
+def notify_billing_staffers(**kwargs):
+    request = kwargs.get('request', None)
+    article = kwargs.get('article', None)
+    billing_staffers = models.BillingStaffer.objects.filter(
+        journal=request.journal,
+        receives_notifications=True,
+    )
+
+    for billing_staffer in billing_staffers:
+        billing_staffer.send_notification(request, article)
+
+

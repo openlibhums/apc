@@ -229,7 +229,7 @@ def make_waiver_application(request, article_id):
             waiver.complete_application(article, request)
             return redirect(
                 reverse(
-                    'core_dashboard_article', 
+                    'core_dashboard_article',
                     kwargs={'article_id': article.pk},
                 )
             )
@@ -241,3 +241,88 @@ def make_waiver_application(request, article_id):
     }
 
     return render(request, template, context)
+
+
+@has_journal
+@editor_user_required
+def billing_staff(request):
+    """
+    Allows editors to view billing staff members.
+    """
+    billing_staffers = models.BillingStaffer.objects.filter(
+        journal=request.journal,
+    )
+
+    template = 'apc/billing_staff.html'
+    context = {
+        'billing_staffers': billing_staffers,
+    }
+
+    return render(request, template, context)
+
+
+@has_journal
+@editor_user_required
+def manage_billing_staff(request, billing_staffer_id=None):
+    """
+    Editors can add, edit or delete billing staff members.
+    """
+
+    # Grab the staffer if we have an ID, otherwise set to None.
+    billing_staffer = get_object_or_404(
+        models.BillingStaffer,
+        journal=request.journal,
+        pk=billing_staffer_id
+    ) if billing_staffer_id else None
+
+    form = forms.BillingStafferForm(
+        instance=billing_staffer,
+        request=request,
+    )
+
+    if request.POST:
+        if billing_staffer and 'delete' in request.POST:
+            billing_staffer.delete()
+            messages.add_message(
+                request, 
+                messages.INFO,
+                'Billing Staffer deleted.'
+            )
+            return redirect(
+                reverse(
+                    'apc_billing_staff',
+                )
+            )
+
+
+        form = forms.BillingStafferForm(
+            request.POST,
+            instance=billing_staffer,
+            request=request,
+        )
+
+        if form.is_valid():
+            billing_staffer = form.save()
+            messages.add_message(
+                request,
+                messages.SUCCESS,
+                'Billing Staffer saved.'
+            )
+            return redirect(
+                reverse(
+                    'apc_billing_staff'
+                )
+            )
+
+    template = 'apc/manage_billing_staff.html'
+    context = {
+        'billing_staffer': billing_staffer,
+        'form': form,
+    }
+
+    return render(request, template, context)
+
+
+
+
+

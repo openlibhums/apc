@@ -18,5 +18,17 @@ urlpatterns = [
         views.apc_action,
         name='apc_action',
     ),
+    url(r'^staff/$', views.billing_staff, name='apc_billing_staff'),
+    
+    url(
+        r'^staff/new/$', 
+        views.manage_billing_staff, 
+        name='apc_new_billing_staff',
+    ),
+    url(
+        r'^staff/(?P<billing_staffer_id>\d+)/$', 
+        views.manage_billing_staff, 
+        name='apc_manage_billing_staff',
+    ),
 
 ]

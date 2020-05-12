@@ -1,0 +1,17 @@
+[
+  {
+    "group": {
+      "name": "email"
+    },
+    "setting": {
+      "description": "Email sent to Billing Staffer on article acceptance.",
+      "is_translatable": true,
+      "name": "apc_article_ready_for_invoicing",
+      "pretty_name": "APC Plugin: Article Ready for Invoicing",
+      "type": "rich-text"
+    },
+    "value": {
+      "default": "<p>Dear {{ billing_staffer.staffer.full_name }},</p><p>This is an notification from {{ request.journal.name }}. Article #{{ article.pk }} '{{ article.title|safe }}' is ready for invoicing. </p><p><a href=\"{% journal_url 'apc_index' %}\">View APC Dashboard</a></p>"
+    }
+  }
+]

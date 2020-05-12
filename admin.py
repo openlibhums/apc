@@ -23,8 +23,8 @@ class ArticleAPCAdmin(admin.ModelAdmin):
 
 
 class BillingStafferAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'journal', 'staffer', 'recieves_notifications')
-    list_filter = ('journal', 'staffer', 'recieves_notifications')
+    list_display = ('pk', 'journal', 'staffer', 'receives_notifications')
+    list_filter = ('journal', 'staffer', 'receives_notifications')
     raw_id_fields = ('journal', 'staffer')
 
 

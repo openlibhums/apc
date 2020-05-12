@@ -1,0 +1,73 @@
+{% extends "admin/core/base.html" %}
+{% load foundation %}
+
+{% block title %}APC Billing Staff{% endblock %}
+{% block title-section %}APC Billing Staff{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    <li><a href="{% url 'apc_index' %}">APC Management Plugin</a></li>
+    <li><a href="{% url 'apc_billing_staff' %}">Billing Staff</a></li>
+    {% if billing_staffer %}
+        <li>Edit {{ staffer.full_name }}</li>
+    {% else %}
+        <li>Add New Billing Staffer</li>
+    {% endif %}
+
+{% endblock breadcrumbs %}
+
+{% block body %}
+    <section class="content">
+    	<div class="row expanded">
+    		<div class="box">
+    			<div class="title-area">
+    				<h2>
+                        {% if billing_staffer %}
+                            Edit {{ staffer.full_name }}
+                        {% else %}
+                            Add New Billing Staffer
+                        {% endif %}            
+                    </h2>
+    			</div>
+    			<div class="content">
+                    {% include "elements/forms/errors.html" with form=form %}
+    				<form method="POST">
+                        {% csrf_token %}
+                        {{ form.staffer|foundation }}
+                        {{ form.receives_notifications|foundation }}
+                        <div class="row expanded">
+                            <div class="large-12 columns">
+                                <button name="save" class="button">
+                                    Save
+                                </button>
+                                {% if billing_staffer %}
+                                <button name="delete" class="alert button">
+                                    Delete
+                                </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </form>
+    			</div>
+    		</div>
+    	</div>
+	</section>
+{% endblock body %}
+
+{% block js %}
+{% include "elements/datatables.html" with target='.table' %}
+<link rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.default.min.css"
+  integrity="sha256-ibvTNlNAB4VMqE5uFlnBME6hlparj5sEr1ovZ3B/bNA="
+  crossorigin="anonymous"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"
+    integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk="
+    crossorigin="anonymous"></script>
+
+<script>
+$('#id_staffer').selectize({
+    create: true,
+    sortField: 'text'
+});
+</script>
+{% endblock js %}
