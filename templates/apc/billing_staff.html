@@ -1,0 +1,53 @@
+{% extends "admin/core/base.html" %}
+{% load bool_fa %}
+
+{% block title %}APC Billing Staff{% endblock %}
+{% block title-section %}APC Billing Staff{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    <li><a href="{% url 'apc_index' %}">APC Management Plugin</a></li>
+    <li>Billing Staff</li>
+{% endblock breadcrumbs %}
+
+{% block body %}
+    <section class="content">
+    	<div class="row expanded">
+    		<div class="box">
+    			<div class="content">
+    				<p>Currently this section allows you to add and remove Billing Staffers. The plugin only uses this link to determine who should be notified when a new article is accepted and is thus available to manipulate via the interfaces here.</p>
+    			</div>
+    			<div class="title-area">
+    				<h2>Staffers</h2>
+    				<a class="button" href="{% url 'apc_new_billing_staff' %}">Add New Staffer</a>
+    			</div>
+    			<div class="content">
+    				<table class="table">
+    					<thead>
+    						<tr>
+    							<th>Staffer</th>
+    							<th>Active</th>
+    						</tr>
+    					</thead>
+    					<tbody>
+    						{% for billing_staffer in billing_staffers %}
+    						<tr>
+    							<td>
+    								<a href="{% url 'apc_manage_billing_staff' billing_staffer.pk %}">
+    									{{ billing_staffer.staffer.full_name }}
+    								</a>
+    							</td>
+    							<td>{{ billing_staffer.receives_notifications|bool_fa }}</td>
+    						</tr>
+    						{% endfor %}
+    					</tbody>
+    				</table>
+    			</div>
+    		</div>
+    	</div>
+	</section>
+{% endblock body %}
+
+{% block js %}
+{% include "elements/datatables.html" with target='.table' %}
+{% endblock js %}

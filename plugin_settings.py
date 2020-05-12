@@ -1,6 +1,7 @@
 from plugins.apc import logic
 from utils import models
 from events import logic as event_logic
+from utils.install import update_settings
 
 PLUGIN_NAME = 'APC Manager'
 DESCRIPTION = 'This plugin supports management of APCs in Janeway.'
@@ -16,20 +17,33 @@ IS_WORKFLOW_PLUGIN = False
 
 
 def get_self():
+    defaults = {
+        'version': VERSION,
+        'display_name': DISPLAY_NAME,
+        'enabled': True,
+    }
+
     new_plugin, created = models.Plugin.objects.get_or_create(
         name=SHORT_NAME,
-        display_name=DISPLAY_NAME,
-        version=VERSION,
-        enabled=True,
+        defaults=defaults,
     )
     return new_plugin
 
 
 def install():
+    defaults = {
+        'version': VERSION,
+        'display_name': DISPLAY_NAME,
+        'enabled': True,
+    }
+
     new_plugin, created = models.Plugin.objects.get_or_create(
         name=SHORT_NAME,
-        version=VERSION,
-        enabled=True,
+        defaults=defaults,
+    )
+
+    update_settings(
+        file_path='plugins/apc/install/settings.json'
     )
 
     if created:
@@ -57,4 +71,9 @@ def register_for_events():
     event_logic.Events.register_for_event(
         event_logic.Events.ON_ARTICLE_SUBMITTED,
         logic.set_apc,
+    )
+
+    event_logic.Events.register_for_event(
+        event_logic.Events.ON_ARTICLE_ACCEPTED,
+        logic.notify_billing_staffers,
     )

@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.urls import reverse
 
-from utils import notify_helpers
+from utils import notify_helpers, models as utils_models, notify_helpers
 
 
 def waiver_status_choices():
@@ -151,12 +151,36 @@ class WaiverApplication(models.Model):
 class BillingStaffer(models.Model):
     journal = models.ForeignKey('journal.Journal')
     staffer = models.ForeignKey('core.Account')
-    recieves_notifications = models.BooleanField(default=True)
+    receives_notifications = models.BooleanField(default=True)
+
+    class Meta:
+        unique_together = ('staffer', 'journal')
 
     def __str__(self):
-        "[{code}] - {staffer} ({active})".format(
+        return "[{code}] - {staffer} ({active})".format(
             code=self.journal.code,
-            staffer=self.staffer.full_name,
-            active=self.recieves_notifications,
+            staffer=self.staffer.full_name(),
+            active=self.receives_notifications,
         )
 
+    def send_notification(self, request, article):
+        description="Article {title} is ready for invoicing".format(
+            title=article.title,
+        )
+
+        log_dict = {
+            'level': 'Info', 
+            'action_text': description,
+            'types': 'APC Notication',
+            'target': article,
+        }
+
+        notify_helpers.send_email_with_body_from_setting_template(
+            request,
+            'apc_article_ready_for_invoicing',
+            'Article Ready for Invoicing',
+            self.staffer.email,
+            {'article': article, 'billing_staffer': self},
+            log_dict=log_dict,
+        )
+        notify_helpers.send_slack(request, description, ['slack_editors'])
