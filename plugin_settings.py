@@ -6,11 +6,11 @@ from utils.install import update_settings
 PLUGIN_NAME = 'APC Manager'
 DESCRIPTION = 'This plugin supports management of APCs in Janeway.'
 AUTHOR = 'Andy Byers'
-VERSION = '1.0'
+VERSION = '1.1'
 SHORT_NAME = 'apc'
 DISPLAY_NAME = 'apc'
 MANAGER_URL = 'apc_index'
-JANEWAY_VERSION = "1.3.7"
+JANEWAY_VERSION = "1.3.8"
 
 # Workflow Settings
 IS_WORKFLOW_PLUGIN = False
@@ -37,7 +37,7 @@ def install():
         'enabled': True,
     }
 
-    new_plugin, created = models.Plugin.objects.get_or_create(
+    plugin, created = models.Plugin.objects.get_or_create(
         name=SHORT_NAME,
         defaults=defaults,
     )
@@ -49,7 +49,12 @@ def install():
     if created:
         print('Plugin {0} installed.'.format(PLUGIN_NAME))
     else:
-        print('Plugin {0} is already installed.'.format(PLUGIN_NAME))
+        if plugin.version != VERSION:
+            plugin.version = VERSION
+            plugin.save()
+            print('Plugin {0} version updated.'.format(PLUGIN_NAME))
+        else:
+            print('Plugin {0} is already installed.'.format(PLUGIN_NAME))
 
 
 def hook_registry():
