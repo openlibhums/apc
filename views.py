@@ -344,7 +344,7 @@ def add_article(request):
         journal=request.journal,
         articleapc__isnull=True,
         section__isnull=False,
-        date_accepted__isnull=False
+        date_accepted__isnull=False,
     )
 
     if request.POST and 'article_to_add' in request.POST:
@@ -370,14 +370,15 @@ def add_article(request):
                 messages.add_message(
                     request,
                     messages.SUCCESS,
-                    'APC set for article.'
+                    'APC set for article.',
                 )
             except models.SectionAPC.DoesNotExist:
                 messages.add_message(
                     request,
                     messages.WARNING,
                     'APC Management is enabled but this'
-                    ' section has no APC.')
+                    ' section has no APC.',
+                )
         except submission_models.Article.DoesNotExist:
             messages.add_message(
                 request,
