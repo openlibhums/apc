@@ -15,6 +15,10 @@ JANEWAY_VERSION = "1.3.8"
 # Workflow Settings
 IS_WORKFLOW_PLUGIN = False
 
+# Events
+ON_INVOICE_SENT = 'on_invoice_sent'
+ON_INVOICE_PAID = 'on_invoice_paid'
+
 
 def get_self():
     defaults = {
@@ -80,5 +84,15 @@ def register_for_events():
 
     event_logic.Events.register_for_event(
         event_logic.Events.ON_ARTICLE_ACCEPTED,
+        logic.notify_billing_staffers,
+    )
+
+    event_logic.Events.register_for_event(
+        ON_INVOICE_SENT,
+        logic.notify_billing_staffers,
+    )
+
+    event_logic.Events.register_for_event(
+        ON_INVOICE_PAID,
         logic.notify_billing_staffers,
     )

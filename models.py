@@ -148,13 +148,26 @@ class WaiverApplication(models.Model):
             return 'Waiver has not been reviewed.'
 
 
+def type_of_notification_choices():
+    return (
+        ('ready', 'Ready for Invoicing'),
+        ('invoiced', 'Invoice Sent'),
+        ('paid', 'Invoice Paid'),
+    )
+
+
 class BillingStaffer(models.Model):
     journal = models.ForeignKey('journal.Journal')
     staffer = models.ForeignKey('core.Account')
     receives_notifications = models.BooleanField(default=True)
+    type_of_notification = models.CharField(
+        max_length=15,
+        choices=type_of_notification_choices(),
+        default='ready',
+    )
 
     class Meta:
-        unique_together = ('staffer', 'journal')
+        unique_together = ('staffer', 'journal', 'type_of_notification')
 
     def __str__(self):
         return "[{code}] - {staffer} ({active})".format(
@@ -163,22 +176,39 @@ class BillingStaffer(models.Model):
             active=self.receives_notifications,
         )
 
+    def status_string(self):
+        if self.type_of_notification == 'ready':
+            return 'Ready for Invoicing'
+        elif self.type_of_notification == 'invoiced':
+            return 'Invoice Sent',
+        else:
+            return 'Invoice Paid'
+
+    def notification_setting_name(self):
+        if self.type_of_notification == 'ready':
+            return 'apc_article_ready_for_invoicing'
+        elif self.type_of_notification == 'invoiced':
+            return 'apc_article_invoice_sent'
+        else:
+            return 'apc_article_invoice_paid'
+
     def send_notification(self, request, article):
-        description="Article {title} is ready for invoicing".format(
+        description = "Article \"{title}\" apc status: {status}".format(
             title=article.title,
+            status=self.status_string(),
         )
 
         log_dict = {
             'level': 'Info', 
             'action_text': description,
-            'types': 'APC Notication',
+            'types': 'APC Notification',
             'target': article,
         }
 
         notify_helpers.send_email_with_body_from_setting_template(
             request,
-            'apc_article_ready_for_invoicing',
-            'Article Ready for Invoicing',
+            self.notification_setting_name(),
+            'Article APC Update',
             self.staffer.email,
             {'article': article, 'billing_staffer': self},
             log_dict=log_dict,

@@ -11,6 +11,7 @@ from security.decorators import (
     article_author_required,
 )
 from utils import setting_handler
+from events import logic as event_logic
 
 
 @has_journal
@@ -71,14 +72,27 @@ def apc_action(request, apc_id, action):
     )
 
     if request.POST and 'action' in request.POST:
+        event_kwargs = {
+            'request': request,
+            'article': apc.article,
+            'type_of_notification': action,
+        }
         if action == 'paid':
             apc.mark_as_paid()
+            event_logic.Events.raise_event(
+                plugin_settings.ON_INVOICE_PAID,
+                **event_kwargs,
+            )
         elif action == 'unpaid':
             apc.mark_as_unpaid()
         elif action == 'new':
             apc.mark_as_new()
         elif action == 'invoiced':
             apc.mark_as_invoiced()
+            event_logic.Events.raise_event(
+                plugin_settings.ON_INVOICE_SENT,
+                **event_kwargs,
+            )
         else:
             messages.add_message(
                 request,
