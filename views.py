@@ -355,7 +355,7 @@ def add_article(request):
                 pk=article_id,
                 journal=request.journal,
                 section__isnull=False,
-                articleapc__isnull=False,
+                articleapc__isnull=True,
             )
             try:
                 section_apc = models.SectionAPC.objects.get(
@@ -385,6 +385,12 @@ def add_article(request):
                 messages.ERROR,
                 'No article found matching supplied ID.',
             )
+
+        return redirect(
+            reverse(
+                'apc_add_article',
+            )
+        )
 
     template = 'apc/add_article.html'
     context = {
