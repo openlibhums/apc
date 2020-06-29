@@ -29,26 +29,31 @@
                         {% endif %}            
                     </h2>
     			</div>
-    			<div class="content">
-                    {% include "elements/forms/errors.html" with form=form %}
-    				<form method="POST">
-                        {% csrf_token %}
-                        {{ form.staffer|foundation }}
-                        {{ form.receives_notifications|foundation }}
-                        <div class="row expanded">
-                            <div class="large-12 columns">
-                                <button name="save" class="button">
-                                    Save
-                                </button>
-                                {% if billing_staffer %}
-                                <button name="delete" class="alert button">
-                                    Delete
-                                </button>
-                                {% endif %}
-                            </div>
+                <div class="content">
+                    <div class="row expanded">
+                        <div class="large-6 columns">
+                            {% include "elements/forms/errors.html" with form=form %}
+                            <form method="POST">
+                                {% csrf_token %}
+                                {{ form.staffer|foundation }}
+                                {{ form.type_of_notification|foundation }}
+                                {{ form.receives_notifications|foundation }}
+                                <div class="row expanded">
+                                    <div class="large-12 columns">
+                                        <button name="save" class="button">
+                                            Save
+                                        </button>
+                                        {% if billing_staffer %}
+                                            <button name="delete" class="alert button">
+                                                Delete
+                                            </button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </form>
                         </div>
-                    </form>
-    			</div>
+                    </div>
+                </div>
     		</div>
     	</div>
 	</section>
