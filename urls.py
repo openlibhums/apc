@@ -30,5 +30,10 @@ urlpatterns = [
         views.manage_billing_staff, 
         name='apc_manage_billing_staff',
     ),
+    url(
+        r'^add_article/$',
+        views.add_article,
+        name='apc_add_article',
+    ),
 
 ]
