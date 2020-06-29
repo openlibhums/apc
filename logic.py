@@ -74,6 +74,7 @@ def set_apc(**kwargs):
         except (ObjectDoesNotExist, IndexError):
             pass
 
+
 def notify_billing_staffers(**kwargs):
     request = kwargs.get('request', None)
     article = kwargs.get('article', None)

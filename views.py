@@ -331,6 +331,65 @@ def manage_billing_staff(request, billing_staffer_id=None):
     return render(request, template, context)
 
 
+@has_journal
+@editor_user_required
+def add_article(request):
+    """
+    A utility view that lets an editor select an article and add it to the APC
+    Plugin if it was missed for whatever reason.
+    :param request: HttpRequest
+    :return: HttpResponse or HttpRedirect
+    """
+    journal_articles = submission_models.Article.objects.filter(
+        journal=request.journal,
+        articleapc__isnull=True,
+        section__isnull=False,
+        date_accepted__isnull=False
+    )
 
+    if request.POST and 'article_to_add' in request.POST:
+        article_id = request.POST.get('article_to_add')
+
+        try:
+            article = submission_models.Article.objects.get(
+                pk=article_id,
+                journal=request.journal,
+                section__isnull=False,
+                articleapc__isnull=False,
+            )
+            try:
+                section_apc = models.SectionAPC.objects.get(
+                    section=article.section,
+                )
+                models.ArticleAPC.objects.create(
+                    article=article,
+                    section_apc=section_apc,
+                    value=section_apc.value,
+                    currency=section_apc.currency,
+                )
+                messages.add_message(
+                    request,
+                    messages.SUCCESS,
+                    'APC set for article.'
+                )
+            except models.SectionAPC.DoesNotExist:
+                messages.add_message(
+                    request,
+                    messages.WARNING,
+                    'APC Management is enabled but this'
+                    ' section has no APC.')
+        except submission_models.Article.DoesNotExist:
+            messages.add_message(
+                request,
+                messages.ERROR,
+                'No article found matching supplied ID.',
+            )
+
+    template = 'apc/add_article.html'
+    context = {
+        'journal_articles': journal_articles,
+    }
+
+    return render(request, template, context)
 
 

@@ -1,0 +1,57 @@
+{% extends "admin/core/base.html" %}
+{% load foundation %}
+
+{% block title %}Add Article to Plugin{% endblock %}
+{% block title-section %}Add Article to Plugin{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    <li><a href="{% url 'apc_index' %}">APC Management Plugin</a></li>
+    <li>Add Article to Plugin</li>
+
+{% endblock breadcrumbs %}
+
+{% block body %}
+    <section class="content">
+    	<div class="row expanded">
+    		<div class="box">
+    			<div class="title-area">
+    				<h2>
+                        Select an Article to Add
+                    </h2>
+    			</div>
+    			<div class="content">
+    				<form method="POST">
+                        {% csrf_token %}
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Title</th>
+                                    <th>Section</th>
+                                    <th>Main Author</th>
+                                    <th>Select</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for article in journal_articles %}
+                                    <tr>
+                                        <td>{{ article.id }}</td>
+                                        <td>{{ article.title }}</td>
+                                        <td>{{ article.section.name }}</td>
+                                        <td>{{ article.correspondence_author.full_name }}</td>
+                                        <td><button class="secondary tiny button" name="article_to_add" value="{{ article.id }}">Select Article</button></td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </form>
+    			</div>
+    		</div>
+    	</div>
+	</section>
+{% endblock body %}
+
+{% block js %}
+{% include "elements/datatables.html" with target='.table' %}
+{% endblock js %}
