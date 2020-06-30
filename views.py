@@ -1,3 +1,5 @@
+from decimal import InvalidOperation
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib import messages
@@ -331,6 +333,53 @@ def manage_billing_staff(request, billing_staffer_id=None):
     return render(request, template, context)
 
 
+@has_journal
+@editor_user_required
+def apc_discount(request, apc_id):
+    """
+    Allows an Editor to apply an predetermined or manual discount to an APC.
+    :param request: HttpRequest
+    :param apc_id: APC object PK
+    :return: HttpRequest or HttpRedirect
+    """
+    apc = get_object_or_404(
+        models.ArticleAPC,
+        pk=apc_id,
+        article__journal=request.journal,
+    )
 
+    predefined_discounts = models.APCDiscount.objects.filter(
+        journal=request.journal,
+    )
+
+    if request.POST and 'discount_value' in request.POST:
+        discount_value = request.POST.get('discount_value')
+        try:
+            apc.apply_discount(discount_value)
+            messages.add_message(
+                request,
+                messages.SUCCESS,
+                'Discount applied. APC amount is now {amount}.'.format(
+                    amount=apc.value,
+                ),
+            )
+        except InvalidOperation:
+            messages.add_message(
+                request,
+                messages.ERROR,
+                'Input must be an integer or decimal.'
+            )
+        return redirect(
+            reverse(
+                'apc_index',
+            )
+        )
+    template = 'apc/apc_discount.html'
+    context = {
+        'apc': apc,
+        'predefined_discounts': predefined_discounts,
+    }
+
+    return render(request, template, context)
 
 

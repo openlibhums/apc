@@ -1,8 +1,9 @@
 from django.db import models
 from django.utils import timezone
 from django.urls import reverse
+from decimal import Decimal
 
-from utils import notify_helpers, models as utils_models, notify_helpers
+from utils import notify_helpers
 
 
 def waiver_status_choices():
@@ -51,7 +52,7 @@ class ArticleAPC(models.Model):
     article = models.OneToOneField('submission.Article')
     section_apc = models.ForeignKey(SectionAPC)
     value = models.DecimalField(
-        max_digits=6,
+        max_digits=8,
         decimal_places=2,
         help_text='Decimal with two places eg. 200.00',
     )
@@ -87,6 +88,10 @@ class ArticleAPC(models.Model):
     def mark_as_new(self):
         self.status = 'new'
         self.completed = None
+        self.save()
+
+    def apply_discount(self, discount_amount):
+        self.value = self.value - Decimal(discount_amount)
         self.save()
 
 
@@ -184,3 +189,23 @@ class BillingStaffer(models.Model):
             log_dict=log_dict,
         )
         notify_helpers.send_slack(request, description, ['slack_editors'])
+
+
+class APCDiscount(models.Model):
+    journal = models.ForeignKey('journal.Journal')
+    name = models.CharField(max_length=255)
+    amount = models.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        help_text='Decimal with two places eg. 200.00',
+    )
+
+    class Meta:
+        ordering = ('-amount', 'name')
+
+    def __str__(self):
+        return '{} discount {}'.format(
+            self.name,
+            self.amount,
+        )
+

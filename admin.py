@@ -4,11 +4,9 @@ from plugins.apc.models import *
 
 
 class SectionAPCAdmin(admin.ModelAdmin):
-    list_display = ('section_name', 'value', 'currency')
+    list_display = ('section', 'value', 'currency')
     list_filter = ('currency',)
-
-    def section_name(self, obj):
-        return obj.section.name
+    raw_id_fields = ('section',)
 
 
 class WaiverApplicationAdmin(admin.ModelAdmin):
@@ -28,11 +26,19 @@ class BillingStafferAdmin(admin.ModelAdmin):
     raw_id_fields = ('journal', 'staffer')
 
 
+class APCDiscountAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'amount', 'journal')
+    list_display_links = ('pk', 'amount')
+    raw_id_fields = ('journal',)
+    list_filter = ('journal',)
+
+
 admin_list = [
     (SectionAPC, SectionAPCAdmin),
     (WaiverApplication, WaiverApplicationAdmin),
     (ArticleAPC, ArticleAPCAdmin),
     (BillingStaffer, BillingStafferAdmin),
+    (APCDiscount, APCDiscountAdmin),
 ]
 
 [admin.site.register(*t) for t in admin_list]

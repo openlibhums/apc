@@ -1,0 +1,57 @@
+{% extends "admin/core/base.html" %}
+{% load foundation %}
+
+{% block title %}APC Discount{% endblock %}
+{% block title-section %}APC Discount{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    <li><a href="{% url 'apc_index' %}">APC Management Plugin</a></li>
+    <li>Discount for {{ apc.article.title|safe }}</li>
+{% endblock breadcrumbs %}
+
+{% block body %}
+    <section class="content">
+        <div class="row expanded">
+            <div class="large-12 columns">
+                <div class="box">
+                    <div class="title-area">
+                        <h2>Discounting APC #{{ apc.pk }} {{ apc.article.title }}</h2>
+                    </div>
+                    <div class="content">
+                        <div class="row expanded">
+                            <div class="large-4 columns">
+                                <p>This article's current APC is {{ apc.value }} {{ apc.currency }}. Selecting a discount will reduce the APC by that amount. You can select a predefined discount or add one freehand.</p>
+                                <form method="POST" id="radioform">
+                                    {% csrf_token %}
+                                    {% include "elements/forms/errors.html" %}
+                                    {% for discount in predefined_discounts %}
+                                    <label><input {% if forloop.first %}checked{% endif %} type="radio" name="discount" value="{{ discount.amount }}">{{ discount.name }} - {{ discount.amount }} {{ apc.currency }}</label>
+                                    {% endfor %}
+                                    <input type="number" step=".01" name="discount_value" value="{{ predefined_discounts.0.amount }}">
+                                    <button name="action" class="success button">Update</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        function setText() {
+            var form = this.form;
+            form.elements.discount_value.value = this.value;
+        }
+
+        var form = document.getElementById('radioform'),
+            radios = form.elements.discount,
+            i;
+        for (i = 0; i < radios.length; i += 1) {
+            radios[i].onclick = setText;
+        }
+    </script>
+{% endblock %}

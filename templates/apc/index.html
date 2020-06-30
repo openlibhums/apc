@@ -57,7 +57,7 @@
                                             <td>{{ apc.article.date_published }}</td>
                                             <td>{{ apc.article.correspondence_author.full_name }}</td>
                                             <td>{{ apc.article.section.name }}</td>
-                                            <td>{{ apc.value }} {{ apc.currency }}</td>
+                                            <td>{{ apc.value }} {{ apc.currency }}<a href="{% url 'apc_discount' apc.pk %}"> <span class="fa fa-edit"></span> </a></td>
                                             <td><a href="{% url 'apc_action' apc.pk 'paid' %}"
                                                    class="tiny success button">Mark as Paid</a><a
                                                     href="{% url 'apc_action' apc.pk 'unpaid' %}"
