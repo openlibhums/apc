@@ -41,7 +41,7 @@
       "type": "rich-text"
     },
     "value": {
-      "default": "<p>Dear {{ billing_staffer.staffer.full_name }},</p><p>This is an notification from {{ request.journal.name }}. An invoide for article #{{ article.pk }} '{{ article.title|safe }}' has been paid. </p><p><a href=\"{% journal_url 'apc_index' %}\">View APC Dashboard</a></p>"
+      "default": "<p>Dear {{ billing_staffer.staffer.full_name }},</p><p>This is an notification from {{ request.journal.name }}. An invoice for article #{{ article.pk }} '{{ article.title|safe }}' has been paid. </p><p><a href=\"{% journal_url 'apc_index' %}\">View APC Dashboard</a></p>"
     }
   }
 ]
