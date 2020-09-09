@@ -177,12 +177,8 @@ class BillingStaffer(models.Model):
         )
 
     def status_string(self):
-        if self.type_of_notification == 'ready':
-            return 'Ready for Invoicing'
-        elif self.type_of_notification == 'invoiced':
-            return 'Invoice Sent',
-        else:
-            return 'Invoice Paid'
+        status_dict = dict(type_of_notification_choices())
+        return status_dict[self.type_of_notification]
 
     def notification_setting_name(self):
         if self.type_of_notification == 'ready':
