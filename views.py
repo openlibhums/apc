@@ -400,3 +400,31 @@ def add_article(request):
     return render(request, template, context)
 
 
+@has_journal
+@editor_user_required
+def discount_apc(request, apc_id):
+    """
+    Allows editor to discount an APC.
+    """
+    apc = get_object_or_404(
+        models.ArticleAPC,
+        pk=apc_id,
+        article__journal=request.journal,
+    )
+
+    if request.POST:
+        new_apc_amount = request.POST.get('new_value')
+        apc.value = new_apc_amount
+        apc.save()
+        messages.add_message(
+            request,
+            messages.SUCCESS,
+            'APC Value Updated',
+        )
+
+    template = 'apc/discount_apc.html'
+    context = {
+        'apc': apc,
+        'discounts': models.Discount.objects.filter(journal=request.journal),
+    }
+    return render(request, template, context)

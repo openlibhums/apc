@@ -15,6 +15,7 @@
                 <div class="box">
                     <div class="title-area">
                         <h2>Articles Ready for Invoicing</h2>
+                        <a href="/admin/apc/discount/" class="button" target="_blank">Manage Discounts</a>
                         <a href="{% url 'apc_add_article' %}" class="button" target="_blank">Add Article</a>
                         <a href="{% url 'apc_billing_staff' %}" class="button">Manage Billing Staff</a>
                         <a href="{% url 'apc_settings' %}" class="button" target="_blank">Edit APC Settings</a>
@@ -59,7 +60,7 @@
                                             <td>{{ apc.article.date_published }}</td>
                                             <td>{{ apc.article.correspondence_author.full_name }}</td>
                                             <td>{{ apc.article.section.name }}</td>
-                                            <td>{{ apc.value }} {{ apc.currency }}</td>
+                                            <td>{{ apc.value }} {{ apc.currency }} <a href="{% url 'discount_apc' apc.pk %}"><i class="fa fa-edit" aria-hidden="true">&nbsp;</i></a></td>
                                             <td><a href="{% url 'apc_action' apc.pk 'paid' %}"
                                                    class="tiny success button">Mark as Paid</a><a
                                                     href="{% url 'apc_action' apc.pk 'unpaid' %}"

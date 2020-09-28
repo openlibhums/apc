@@ -1,0 +1,51 @@
+{% extends "admin/core/base.html" %}
+{% load bool_fa %}
+
+{% block title %}APC Discount{% endblock %}
+{% block title-section %}APC Discount{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    <li><a href="{% url 'apc_index' %}">APC Management Plugin</a></li>
+    <li>Discount {{ apc.article.title|safe }}</li>
+{% endblock breadcrumbs %}
+
+{% block body %}
+    <div class="box">
+        <div class="title-area">
+            <h2>Applying Discount to {{ apc.article.title|safe }}</h2>
+        </div>
+        <div class="content">
+            <p>You can apply a preset discount amount or set a figure manually.</p>
+            <form method="POST">
+                {% csrf_token %}
+                <input value="{{ apc.value }}" id="default_value" name="apc_amount" type="hidden">
+                {% for discount in discounts %}
+                    <input id="{{ discount.pk }}" type="radio" name="discount" value="{{ discount.percentage }}">
+                    <label for="{{ discount.pk }}">{{ discount.name }}</label><br />
+                {% endfor %}
+                <input id="default" type="radio" name="discount" value="0" checked>
+                <label for="default">Input Discount Manually</label>
+                <label for="new_amount">New APC Value</label>
+                <input type="number" step=".01" id="new_value" name="new_value" value="{{ apc.value }}">
+                <button class="success button">Save Value</button>
+            </form>
+        </div>
+    </div>
+{% endblock body %}
+
+{% block js %}
+<script>
+    $('input:radio[name="discount"]').change(
+    function(){
+        if (this.checked) {
+            var discount_amount = this.value;
+            var current_value = $('#default_value').val();
+            var dec = (discount_amount/100).toFixed(2);
+            var to_sub = current_value * dec;
+            var discounted_amount = (current_value - to_sub).toFixed(2);;
+            $('#new_value').val(discounted_amount)
+        }
+    });
+</script>
+{% endblock %}

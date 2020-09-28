@@ -184,3 +184,16 @@ class BillingStaffer(models.Model):
             log_dict=log_dict,
         )
         notify_helpers.send_slack(request, description, ['slack_editors'])
+
+
+class Discount(models.Model):
+    name = models.CharField(max_length=50)
+    percentage = models.PositiveIntegerField()
+    journal = models.ForeignKey(
+        'journal.Journal',
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+
+    def __str__(self):
+        return self.name
