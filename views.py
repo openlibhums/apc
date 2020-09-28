@@ -10,7 +10,7 @@ from security.decorators import (
     editor_user_required,
     article_author_required,
 )
-from utils import setting_handler
+from utils import setting_handler, models as utils_models
 
 
 @has_journal
@@ -413,13 +413,28 @@ def discount_apc(request, apc_id):
     )
 
     if request.POST:
+        original_value = apc.value
         new_apc_amount = request.POST.get('new_value')
         apc.value = new_apc_amount
         apc.save()
+
+        description = 'APC Value changed from {} to {}'.format(
+            original_value,
+            apc.value
+        )
+
+        utils_models.LogEntry.add_entry(
+            types=models.APC_VALUE_CHANGE,
+            description=description,
+            level='INFO',
+            actor=request.user,
+            target=apc,
+        )
+
         messages.add_message(
             request,
             messages.SUCCESS,
-            'APC Value Updated',
+            description,
         )
 
     template = 'apc/discount_apc.html'

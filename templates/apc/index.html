@@ -60,7 +60,7 @@
                                             <td>{{ apc.article.date_published }}</td>
                                             <td>{{ apc.article.correspondence_author.full_name }}</td>
                                             <td>{{ apc.article.section.name }}</td>
-                                            <td>{{ apc.value }} {{ apc.currency }} <a href="{% url 'discount_apc' apc.pk %}"><i class="fa fa-edit" aria-hidden="true">&nbsp;</i></a></td>
+                                            <td>{% include "apc/apc_value.html" %} <a href="{% url 'discount_apc' apc.pk %}"><i class="fa fa-edit" aria-hidden="true">&nbsp;</i></a></td>
                                             <td><a href="{% url 'apc_action' apc.pk 'paid' %}"
                                                    class="tiny success button">Mark as Paid</a><a
                                                     href="{% url 'apc_action' apc.pk 'unpaid' %}"
@@ -98,7 +98,7 @@
                                             <td>{{ apc.article.correspondence_author.full_name }}</td>
                                             <td>{{ apc.invoiced }}</td>
                                             <td>{{ apc.article.section.name }}</td>
-                                            <td>{{ apc.value }} {{ apc.currency }}</td>
+                                            <td>{% include "apc/apc_value.html" %}</td>
                                             <td><a href="{% url 'apc_action' apc.pk 'paid' %}"
                                                    class="tiny success button">Mark as Paid</a><a
                                                     href="{% url 'apc_action' apc.pk 'unpaid' %}"
@@ -134,7 +134,7 @@
                                             <td>{{ apc.invoiced }}</td>
                                             <td>{{ apc.completed }}</td>
                                             <td>{{ apc.article.section.name }}</td>
-                                            <td>{{ apc.value }} {{ apc.currency }}</td>
+                                            <td>{% include "apc/apc_value.html" %}</td>
                                             <td><a href="{% url 'apc_action' apc.pk 'new' %}"
                                                    class="tiny success button">Mark as New</a>
                                             </td>
@@ -169,7 +169,7 @@
                                             <td>{{ apc.invoiced }}</td>
                                             <td>{{ apc.article.date_published }}</td>
                                             <td>{{ apc.article.section.name }}</td>
-                                            <td>{{ apc.value }} {{ apc.currency }}</td>
+                                            <td>{% include "apc/apc_value.html" %}</td>
                                             <td><a href="{% url 'apc_action' apc.pk 'new' %}"
                                                    class="tiny success button">Mark as New</a>
                                             </td>
