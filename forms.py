@@ -38,7 +38,7 @@ class BillingStafferForm(forms.ModelForm):
 
     class Meta:
         model = models.BillingStaffer
-        fields = ('staffer', 'receives_notifications')
+        fields = ('staffer', 'type_of_notification', 'receives_notifications')
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request')
@@ -51,14 +51,16 @@ class BillingStafferForm(forms.ModelForm):
 
     def clean(self):
         staffer = self.cleaned_data.get('staffer')
+        type_of_notification = self.cleaned_data.get('type_of_notification')
         journal = self.request.journal
 
         if not self.instance.pk and models.BillingStaffer.objects.filter(
             staffer=staffer,
             journal=journal,
+            type_of_notification=type_of_notification,
         ).exists():
             self._errors[NON_FIELD_ERRORS] = self.error_class(
-                ['A Billing Staffer with this user and journal already exists.']
+                ['A Billing Staffer with this user, journal and type already exists.']
             )
 
         return self.cleaned_data
