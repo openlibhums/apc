@@ -1,8 +1,9 @@
-# Back Content Plugin
-This plugin allows for fast loading of articles into Janeway.
+# Janeway APC Plugin
+This plugin enables Janeway to set, manage and track Article Publication Charges (APC).
 
-To install:
 
-1. Clone this repo into /plugins/
-2. Run `python3 manage.py install_plugins`
-3. Reload your WSGI server (Apache, Passenger, etc).
+Installation Instructions:
+
+1. Clone this repo into /path/to/janeway/src/plugins/
+2. Run the janeway command for installing plugins: `python3 manage.py install_plugins`
+3. Restart your server (Apache, Passenger, etc).
