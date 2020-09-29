@@ -35,5 +35,9 @@ urlpatterns = [
         views.add_article,
         name='apc_add_article',
     ),
+    url(r'^discount/(?P<apc_id>\d+)/$',
+        views.discount_apc,
+        name='discount_apc',
+    ),
 
 ]

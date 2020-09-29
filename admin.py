@@ -33,6 +33,7 @@ admin_list = [
     (WaiverApplication, WaiverApplicationAdmin),
     (ArticleAPC, ArticleAPCAdmin),
     (BillingStaffer, BillingStafferAdmin),
+    (Discount,),
 ]
 
 [admin.site.register(*t) for t in admin_list]

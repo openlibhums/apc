@@ -1,0 +1,5 @@
+{% if apc.value_change_log_entries %}
+<span data-tooltip data-allow-html="true" tabindex="1" title="{% for le in apc.value_change_log_entries %}{{ le.description }} by {{ le.actor.full_name }}{% if not forloop.last %}<br /><br />{% endif %}{% endfor %}">{{ apc.value }} {{ apc.currency }}</span>
+{% else %}
+{{ apc.value}} {{ apc.currency }}
+{% endif %}

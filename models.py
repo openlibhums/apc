@@ -1,9 +1,11 @@
 from django.db import models
 from django.utils import timezone
 from django.urls import reverse
+from django.contrib.contenttypes.models import ContentType
 
 from utils import notify_helpers, models as utils_models, notify_helpers
 
+APC_VALUE_CHANGE = 'APC Value Change'
 
 def waiver_status_choices():
     return (
@@ -88,6 +90,14 @@ class ArticleAPC(models.Model):
         self.status = 'new'
         self.completed = None
         self.save()
+
+    def value_change_log_entries(self):
+        content_type = ContentType.objects.get_for_model(self)
+        return utils_models.LogEntry.objects.filter(
+            types=APC_VALUE_CHANGE,
+            content_type=content_type,
+            object_id=self.pk,
+        )
 
 
 class WaiverApplication(models.Model):
@@ -210,3 +220,16 @@ class BillingStaffer(models.Model):
             log_dict=log_dict,
         )
         notify_helpers.send_slack(request, description, ['slack_editors'])
+
+
+class Discount(models.Model):
+    name = models.CharField(max_length=50)
+    percentage = models.PositiveIntegerField()
+    journal = models.ForeignKey(
+        'journal.Journal',
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+
+    def __str__(self):
+        return self.name

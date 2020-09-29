@@ -10,7 +10,8 @@ from security.decorators import (
     editor_user_required,
     article_author_required,
 )
-from utils import setting_handler
+
+from utils import setting_handler, models as utils_models
 from events import logic as event_logic
 
 
@@ -414,3 +415,46 @@ def add_article(request):
     return render(request, template, context)
 
 
+@has_journal
+@editor_user_required
+def discount_apc(request, apc_id):
+    """
+    Allows editor to discount an APC.
+    """
+    apc = get_object_or_404(
+        models.ArticleAPC,
+        pk=apc_id,
+        article__journal=request.journal,
+    )
+
+    if request.POST:
+        original_value = apc.value
+        new_apc_amount = request.POST.get('new_value')
+        apc.value = new_apc_amount
+        apc.save()
+
+        description = 'APC Value changed from {} to {}'.format(
+            original_value,
+            apc.value
+        )
+
+        utils_models.LogEntry.add_entry(
+            types=models.APC_VALUE_CHANGE,
+            description=description,
+            level='INFO',
+            actor=request.user,
+            target=apc,
+        )
+
+        messages.add_message(
+            request,
+            messages.SUCCESS,
+            description,
+        )
+
+    template = 'apc/discount_apc.html'
+    context = {
+        'apc': apc,
+        'discounts': models.Discount.objects.filter(journal=request.journal),
+    }
+    return render(request, template, context)
