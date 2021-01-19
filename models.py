@@ -3,9 +3,10 @@ from django.utils import timezone
 from django.urls import reverse
 from django.contrib.contenttypes.models import ContentType
 
-from utils import notify_helpers, models as utils_models, notify_helpers
+from utils import models as utils_models, notify_helpers
 
 APC_VALUE_CHANGE = 'APC Value Change'
+
 
 def waiver_status_choices():
     return (
@@ -203,20 +204,25 @@ class BillingStaffer(models.Model):
             title=article.title,
             status=self.status_string(),
         )
-
         log_dict = {
             'level': 'Info', 
             'action_text': description,
             'types': 'APC Notification',
             'target': article,
         }
-
+        context = {
+            'article': article,
+            'billing_staffer': self,
+            'apc_index_value': request.journal.site_url(
+                path=reverse('apc_index')
+            )
+        }
         notify_helpers.send_email_with_body_from_setting_template(
             request,
             self.notification_setting_name(),
             'Article APC Update',
             self.staffer.email,
-            {'article': article, 'billing_staffer': self},
+            context,
             log_dict=log_dict,
         )
         notify_helpers.send_slack(request, description, ['slack_editors'])

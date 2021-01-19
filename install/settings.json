@@ -11,7 +11,7 @@
       "type": "rich-text"
     },
     "value": {
-      "default": "<p>Dear {{ billing_staffer.staffer.full_name }},</p><p>This is an notification from {{ request.journal.name }}. Article #{{ article.pk }} '{{ article.title|safe }}' is ready for invoicing. </p><p><a href=\"{% journal_url 'apc_index' %}\">View APC Dashboard</a></p>"
+      "default": "<p>Dear {{ billing_staffer.staffer.full_name }},</p><p>This is an notification from {{ request.journal.name }}. Article #{{ article.pk }} '{{ article.title|safe }}' is ready for invoicing. </p><p> View the APC Dashboard {{ apc_index_value }}</p>"
     }
   },
   {
@@ -26,7 +26,7 @@
       "type": "rich-text"
     },
     "value": {
-      "default": "<p>Dear {{ billing_staffer.staffer.full_name }},</p><p>This is an notification from {{ request.journal.name }}. An invoice for article #{{ article.pk }} '{{ article.title|safe }}' has been sent. </p><p><a href=\"{% journal_url 'apc_index' %}\">View APC Dashboard</a></p>"
+      "default": "<p>Dear {{ billing_staffer.staffer.full_name }},</p><p>This is an notification from {{ request.journal.name }}. An invoice for article #{{ article.pk }} '{{ article.title|safe }}' has been sent. </p><p> View the APC Dashboard {{ apc_index_value }}</p>"
     }
   },
   {
@@ -41,7 +41,7 @@
       "type": "rich-text"
     },
     "value": {
-      "default": "<p>Dear {{ billing_staffer.staffer.full_name }},</p><p>This is an notification from {{ request.journal.name }}. An invoice for article #{{ article.pk }} '{{ article.title|safe }}' has been paid. </p><p><a href=\"{% journal_url 'apc_index' %}\">View APC Dashboard</a></p>"
+      "default": "<p>Dear {{ billing_staffer.staffer.full_name }},</p><p>This is an notification from {{ request.journal.name }}. An invoice for article #{{ article.pk }} '{{ article.title|safe }}' has been paid. </p><p> View the APC Dashboard {{ apc_index_value }}</p>"
     }
   }
 ]
