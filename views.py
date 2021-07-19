@@ -18,7 +18,7 @@ from events import logic as event_logic
 @has_journal
 @editor_user_required
 def index(request):
-    sections = submission_models.Section.objects.language().filter(
+    sections = submission_models.Section.objects.filter(
         journal=request.journal).prefetch_related('sectionapc')
     waiver_applications = models.WaiverApplication.objects.filter(
         article__journal=request.journal,
@@ -194,10 +194,10 @@ def settings(request):
 
     template = 'apc/settings.html'
     context = {
-        'enable_apc': enable_apcs.value,
-        'track_apcs': track_apcs.value,
-        'enable_waivers': enable_waivers.value,
-        'waiver_text': waiver_text.value,
+        'enable_apc': enable_apcs.value if enable_apcs else '',
+        'track_apcs': track_apcs.value if track_apcs else '',
+        'enable_waivers': enable_waivers.value if enable_waivers else '',
+        'waiver_text': waiver_text.value if waiver_text else '',
     }
 
     return render(request, template, context)
