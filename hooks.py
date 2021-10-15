@@ -36,6 +36,7 @@ def publication_fees(context):
             'apc/publication_fees.html',
             {'sections': sections},
         )
+    return ''
 
 
 def waiver_info(context):
