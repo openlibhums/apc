@@ -136,7 +136,7 @@ class WaiverApplication(models.Model):
                   '<p><a href="{j_url}{w_url}">Waiver Management</a>'.format(
                       user=request.user,
                       article=article.title,
-                      j_url=request.journal_base_url,
+                      j_url=request.journal.site_url(),
                       w_url=reverse('apc_index'),
                   )
         notify_helpers.send_email_with_body_from_user(

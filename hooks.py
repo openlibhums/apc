@@ -24,9 +24,7 @@ def publication_fees(context):
         pretty='Track APCs',
     )
 
-    sections = submission_models.Section.objects.language().fallbacks(
-        'en'
-    ).filter(
+    sections = submission_models.Section.objects.filter(
         journal=request.journal,
         public_submissions=True,
     ).prefetch_related('sectionapc')
