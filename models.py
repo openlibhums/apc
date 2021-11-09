@@ -133,16 +133,27 @@ class WaiverApplication(models.Model):
 
         # Send email to editors
         message = '<p>{user} has requested a waiver for {article}.</p>' \
-                  '<p><a href="{j_url}{w_url}">Waiver Management</a>'.format(
+                  '<p><a href="{j_url}">Waiver Management</a>'.format(
                       user=request.user,
                       article=article.title,
-                      j_url=request.journal.site_url(),
-                      w_url=reverse('apc_index'),
+                      j_url=request.journal.site_url(path=reverse('apc_index')),
                   )
+
+        to = [
+            bs.staffer.email for bs in BillingStaffer.objects.filter(
+                journal=request.journal,
+                type_of_notification='waiver',
+                receives_notifications=True,
+            )
+        ]
+
+        if not to:
+            to = request.journal.editor_emails
+
         notify_helpers.send_email_with_body_from_user(
             request,
             'New Waiver Application',
-            request.journal.editor_emails,
+            to,
             message,
         )
 
@@ -164,6 +175,7 @@ def type_of_notification_choices():
         ('ready', 'Ready for Invoicing'),
         ('invoiced', 'Invoice Sent'),
         ('paid', 'Invoice Paid'),
+        ('waiver', 'Waiver Application')
     )
 
 
