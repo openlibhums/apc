@@ -43,5 +43,50 @@
     "value": {
       "default": "<p>Dear {{ billing_staffer.staffer.full_name }},</p><p>This is an notification from {{ request.journal.name }}. An invoice for article #{{ article.pk }} '{{ article.title|safe }}' has been paid. </p><p> View the APC Dashboard {{ apc_index_value }}</p>"
     }
+  },
+  {
+    "group": {
+      "name": "email_subject"
+    },
+    "setting": {
+      "description": "Email subject for email sent to Billing Staffer on article acceptance.",
+      "is_translatable": true,
+      "name": "subject_apc_article_ready_for_invoicing",
+      "pretty_name": "APC Plugin: Article Ready for Invoicing Subject",
+      "type": "char"
+    },
+    "value": {
+      "default": "Article Read for Invoicing"
+    }
+  },
+  {
+    "group": {
+      "name": "email_subject"
+    },
+    "setting": {
+      "description": "Email subject for email sent to Billing Staffer on apc invoiced.",
+      "is_translatable": true,
+      "name": "subject_apc_article_invoice_sent",
+      "pretty_name": "APC Plugin: Article Invoice Sent Subject",
+      "type": "char"
+    },
+    "value": {
+      "default": "Article Invoice Sent"
+    }
+  },
+  {
+    "group": {
+      "name": "email_subject"
+    },
+    "setting": {
+      "description": "Email subject for email sent to Billing Staffer on apc paid.",
+      "is_translatable": true,
+      "name": "subject_apc_article_invoice_paid",
+      "pretty_name": "APC Plugin: Article Invoice Paid Subject",
+      "type": "char"
+    },
+    "value": {
+      "default": "Article Invoice Paid"
+    }
   }
 ]
