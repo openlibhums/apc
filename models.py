@@ -199,6 +199,11 @@ class BillingStaffer(models.Model):
         else:
             return 'apc_article_invoice_paid'
 
+    def notification_subject_setting_name(self):
+        return 'subject_{}'.format(
+            self.notification_setting_name()
+        )
+
     def send_notification(self, request, article):
         description = "Article \"{title}\" apc status: {status}".format(
             title=article.title,
@@ -220,7 +225,7 @@ class BillingStaffer(models.Model):
         notify_helpers.send_email_with_body_from_setting_template(
             request,
             self.notification_setting_name(),
-            'Article APC Update',
+            self.notification_subject_setting_name(),
             self.staffer.email,
             context,
             log_dict=log_dict,
