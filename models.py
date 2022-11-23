@@ -28,7 +28,10 @@ def apc_status_choices():
 
 
 class SectionAPC(models.Model):
-    section = models.OneToOneField('submission.Section')
+    section = models.OneToOneField(
+        'submission.Section',
+        on_delete=models.CASCADE,
+    )
     value = models.DecimalField(
         max_digits=6,
         decimal_places=2,
@@ -51,8 +54,14 @@ class SectionAPC(models.Model):
 
 
 class ArticleAPC(models.Model):
-    article = models.OneToOneField('submission.Article')
-    section_apc = models.ForeignKey(SectionAPC)
+    article = models.OneToOneField(
+        'submission.Article',
+        on_delete=models.CASCADE,
+    )
+    section_apc = models.ForeignKey(
+        SectionAPC,
+        on_delete=models.CASCADE,
+    )
     value = models.DecimalField(
         max_digits=6,
         decimal_places=2,
@@ -102,8 +111,16 @@ class ArticleAPC(models.Model):
 
 
 class WaiverApplication(models.Model):
-    article = models.OneToOneField('submission.Article')
-    reviewer = models.ForeignKey('core.Account', blank=True, null=True)
+    article = models.OneToOneField(
+        'submission.Article',
+        on_delete=models.CASCADE,
+    )
+    reviewer = models.ForeignKey(
+        'core.Account',
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
     status = models.CharField(
         max_length=25,
         choices=waiver_status_choices(),
@@ -168,8 +185,14 @@ def type_of_notification_choices():
 
 
 class BillingStaffer(models.Model):
-    journal = models.ForeignKey('journal.Journal')
-    staffer = models.ForeignKey('core.Account')
+    journal = models.ForeignKey(
+        'journal.Journal',
+        on_delete=models.CASCADE,
+    )
+    staffer = models.ForeignKey(
+        'core.Account',
+        on_delete=models.CASCADE,
+    )
     receives_notifications = models.BooleanField(default=True)
     type_of_notification = models.CharField(
         max_length=15,
