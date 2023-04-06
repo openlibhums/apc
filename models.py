@@ -148,21 +148,6 @@ class WaiverApplication(models.Model):
         self.article = article
         self.save()
 
-        # Send email to editors
-        message = '<p>{user} has requested a waiver for {article}.</p>' \
-                  '<p><a href="{j_url}{w_url}">Waiver Management</a>'.format(
-                      user=request.user,
-                      article=article.title,
-                      j_url=request.journal.site_url(),
-                      w_url=reverse('apc_index'),
-                  )
-        notify_helpers.send_email_with_body_from_user(
-            request,
-            'New Waiver Application',
-            request.journal.editor_emails,
-            message,
-        )
-
     def reviewer_display(self):
         if self.reviewer:
             return self.reviewer.full_name()
@@ -181,6 +166,7 @@ def type_of_notification_choices():
         ('ready', 'Ready for Invoicing'),
         ('invoiced', 'Invoice Sent'),
         ('paid', 'Invoice Paid'),
+        ('waiver', 'Waiver Application'),
     )
 
 
@@ -199,7 +185,6 @@ class BillingStaffer(models.Model):
         choices=type_of_notification_choices(),
         default='ready',
     )
-
     class Meta:
         unique_together = ('staffer', 'journal', 'type_of_notification')
 
@@ -219,6 +204,8 @@ class BillingStaffer(models.Model):
             return 'apc_article_ready_for_invoicing'
         elif self.type_of_notification == 'invoiced':
             return 'apc_article_invoice_sent'
+        elif self.type_of_notification == 'waiver':
+            return 'apc_article_waiver'
         else:
             return 'apc_article_invoice_paid'
 

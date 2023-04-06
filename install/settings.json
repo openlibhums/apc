@@ -148,5 +148,35 @@
     "value": {
       "default": ""
     }
+  },
+  {
+    "group": {
+      "name": "email"
+    },
+    "setting": {
+      "description": "Email sent to Billing Staffer when waiver is created.",
+      "is_translatable": true,
+      "name": "apc_article_waiver",
+      "pretty_name": "APC Plugin: Article Waiver",
+      "type": "rich-text"
+    },
+    "value": {
+      "default": "<p>Dear {{ billing_staffer.staffer.full_name }},</p><p>A new waiver application has been made for {{ article.title }}.</p><p>{{ apc_index_value }}</p>"
+    }
+  },
+  {
+    "group": {
+      "name": "email_subject"
+    },
+    "setting": {
+      "description": "Email subject for email sent to Billing Staffer on waiver application.",
+      "is_translatable": true,
+      "name": "subject_apc_article_waiver",
+      "pretty_name": "APC Plugin: Article Waiver Subject",
+      "type": "char"
+    },
+    "value": {
+      "default": "Article Waiver Application"
+    }
   }
 ]
