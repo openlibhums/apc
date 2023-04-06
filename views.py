@@ -250,6 +250,13 @@ def make_waiver_application(request, article_id):
         if form.is_valid():
             waiver = form.save(commit=False)
             waiver.complete_application(article, request)
+            kwargs = {
+                'request': request,
+                'article': article,
+                'type_of_notification': 'waiver',
+            }
+
+            logic.notify_billing_staffers(**kwargs)
             return redirect(
                 reverse(
                     'core_dashboard_article',
