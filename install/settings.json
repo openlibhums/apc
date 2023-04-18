@@ -88,5 +88,65 @@
     "value": {
       "default": "Article Invoice Paid"
     }
+  },
+  {
+    "group": {
+      "name": "plugin:apc"
+    },
+    "setting": {
+      "description": "Enables the APC plugin for submissions to this site",
+      "is_translatable": false,
+      "name": "enable_apcs",
+      "pretty_name": "Enable APCs",
+      "type": "boolean"
+    },
+    "value": {
+      "default": ""
+    }
+  },
+  {
+    "group": {
+      "name": "plugin:apc"
+    },
+    "setting": {
+      "description": "Enables the tracking of APCs in the background for journal managers, without exposing the APC details to the submitting authors",
+      "is_translatable": false,
+      "name": "track_apcs",
+      "pretty_name": "Track APCs",
+      "type": "boolean"
+    },
+    "value": {
+      "default": ""
+    }
+  },
+  {
+    "group": {
+      "name": "plugin:apc"
+    },
+    "setting": {
+      "description": "Controls the text displayed to authors declaring the policy on APC waivers",
+      "is_translatable": true,
+      "name": "waiver_text",
+      "pretty_name": "Waiver Text",
+      "type": "rich-text"
+    },
+    "value": {
+      "default": ""
+    }
+  },
+  {
+    "group": {
+      "name": "plugin:apc"
+    },
+    "setting": {
+      "description": "Enables APC waivers, allowing submitting authors to apply for a waiver after a submission is completed",
+      "is_translatable": false,
+      "name": "enable_waivers",
+      "pretty_name": "Enable Waivers",
+      "type": "boolean"
+    },
+    "value": {
+      "default": ""
+    }
   }
 ]
