@@ -28,7 +28,10 @@ def apc_status_choices():
 
 
 class SectionAPC(models.Model):
-    section = models.OneToOneField('submission.Section')
+    section = models.OneToOneField(
+        'submission.Section',
+        on_delete=models.CASCADE,
+    )
     value = models.DecimalField(
         max_digits=6,
         decimal_places=2,
@@ -51,8 +54,14 @@ class SectionAPC(models.Model):
 
 
 class ArticleAPC(models.Model):
-    article = models.OneToOneField('submission.Article')
-    section_apc = models.ForeignKey(SectionAPC)
+    article = models.OneToOneField(
+        'submission.Article',
+        on_delete=models.CASCADE,
+    )
+    section_apc = models.ForeignKey(
+        SectionAPC,
+        on_delete=models.CASCADE,
+    )
     value = models.DecimalField(
         max_digits=6,
         decimal_places=2,
@@ -102,8 +111,16 @@ class ArticleAPC(models.Model):
 
 
 class WaiverApplication(models.Model):
-    article = models.OneToOneField('submission.Article')
-    reviewer = models.ForeignKey('core.Account', blank=True, null=True)
+    article = models.OneToOneField(
+        'submission.Article',
+        on_delete=models.CASCADE,
+    )
+    reviewer = models.ForeignKey(
+        'core.Account',
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
     status = models.CharField(
         max_length=25,
         choices=waiver_status_choices(),
@@ -175,20 +192,25 @@ def type_of_notification_choices():
         ('ready', 'Ready for Invoicing'),
         ('invoiced', 'Invoice Sent'),
         ('paid', 'Invoice Paid'),
-        ('waiver', 'Waiver Application')
+        ('waiver', 'Waiver Application'),
     )
 
 
 class BillingStaffer(models.Model):
-    journal = models.ForeignKey('journal.Journal')
-    staffer = models.ForeignKey('core.Account')
+    journal = models.ForeignKey(
+        'journal.Journal',
+        on_delete=models.CASCADE,
+    )
+    staffer = models.ForeignKey(
+        'core.Account',
+        on_delete=models.CASCADE,
+    )
     receives_notifications = models.BooleanField(default=True)
     type_of_notification = models.CharField(
         max_length=15,
         choices=type_of_notification_choices(),
         default='ready',
     )
-
     class Meta:
         unique_together = ('staffer', 'journal', 'type_of_notification')
 
@@ -208,8 +230,15 @@ class BillingStaffer(models.Model):
             return 'apc_article_ready_for_invoicing'
         elif self.type_of_notification == 'invoiced':
             return 'apc_article_invoice_sent'
+        elif self.type_of_notification == 'waiver':
+            return 'apc_article_waiver'
         else:
             return 'apc_article_invoice_paid'
+
+    def notification_subject_setting_name(self):
+        return 'subject_{}'.format(
+            self.notification_setting_name()
+        )
 
     def send_notification(self, request, article):
         description = "Article \"{title}\" apc status: {status}".format(
@@ -232,7 +261,7 @@ class BillingStaffer(models.Model):
         notify_helpers.send_email_with_body_from_setting_template(
             request,
             self.notification_setting_name(),
-            'Article APC Update',
+            self.notification_subject_setting_name(),
             self.staffer.email,
             context,
             log_dict=log_dict,

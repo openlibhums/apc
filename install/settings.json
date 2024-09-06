@@ -43,5 +43,140 @@
     "value": {
       "default": "<p>Dear {{ billing_staffer.staffer.full_name }},</p><p>This is an notification from {{ request.journal.name }}. An invoice for article #{{ article.pk }} '{{ article.title|safe }}' has been paid. </p><p> View the APC Dashboard {{ apc_index_value }}</p>"
     }
+  },
+  {
+    "group": {
+      "name": "email_subject"
+    },
+    "setting": {
+      "description": "Email subject for email sent to Billing Staffer on article acceptance.",
+      "is_translatable": true,
+      "name": "subject_apc_article_ready_for_invoicing",
+      "pretty_name": "APC Plugin: Article Ready for Invoicing Subject",
+      "type": "char"
+    },
+    "value": {
+      "default": "Article Read for Invoicing"
+    }
+  },
+  {
+    "group": {
+      "name": "email_subject"
+    },
+    "setting": {
+      "description": "Email subject for email sent to Billing Staffer on apc invoiced.",
+      "is_translatable": true,
+      "name": "subject_apc_article_invoice_sent",
+      "pretty_name": "APC Plugin: Article Invoice Sent Subject",
+      "type": "char"
+    },
+    "value": {
+      "default": "Article Invoice Sent"
+    }
+  },
+  {
+    "group": {
+      "name": "email_subject"
+    },
+    "setting": {
+      "description": "Email subject for email sent to Billing Staffer on apc paid.",
+      "is_translatable": true,
+      "name": "subject_apc_article_invoice_paid",
+      "pretty_name": "APC Plugin: Article Invoice Paid Subject",
+      "type": "char"
+    },
+    "value": {
+      "default": "Article Invoice Paid"
+    }
+  },
+  {
+    "group": {
+      "name": "plugin:apc"
+    },
+    "setting": {
+      "description": "Enables the APC plugin for submissions to this site",
+      "is_translatable": false,
+      "name": "enable_apcs",
+      "pretty_name": "Enable APCs",
+      "type": "boolean"
+    },
+    "value": {
+      "default": ""
+    }
+  },
+  {
+    "group": {
+      "name": "plugin:apc"
+    },
+    "setting": {
+      "description": "Enables the tracking of APCs in the background for journal managers, without exposing the APC details to the submitting authors",
+      "is_translatable": false,
+      "name": "track_apcs",
+      "pretty_name": "Track APCs",
+      "type": "boolean"
+    },
+    "value": {
+      "default": ""
+    }
+  },
+  {
+    "group": {
+      "name": "plugin:apc"
+    },
+    "setting": {
+      "description": "Controls the text displayed to authors declaring the policy on APC waivers",
+      "is_translatable": true,
+      "name": "waiver_text",
+      "pretty_name": "Waiver Text",
+      "type": "rich-text"
+    },
+    "value": {
+      "default": ""
+    }
+  },
+  {
+    "group": {
+      "name": "plugin:apc"
+    },
+    "setting": {
+      "description": "Enables APC waivers, allowing submitting authors to apply for a waiver after a submission is completed",
+      "is_translatable": false,
+      "name": "enable_waivers",
+      "pretty_name": "Enable Waivers",
+      "type": "boolean"
+    },
+    "value": {
+      "default": ""
+    }
+  },
+  {
+    "group": {
+      "name": "email"
+    },
+    "setting": {
+      "description": "Email sent to Billing Staffer when waiver is created.",
+      "is_translatable": true,
+      "name": "apc_article_waiver",
+      "pretty_name": "APC Plugin: Article Waiver",
+      "type": "rich-text"
+    },
+    "value": {
+      "default": "<p>Dear {{ billing_staffer.staffer.full_name }},</p><p>A new waiver application has been made for {{ article.title }}.</p><p>{{ apc_index_value }}</p>"
+    }
+  },
+  {
+    "group": {
+      "name": "email_subject"
+    },
+    "setting": {
+      "description": "Email subject for email sent to Billing Staffer on waiver application.",
+      "is_translatable": true,
+      "name": "subject_apc_article_waiver",
+      "pretty_name": "APC Plugin: Article Waiver Subject",
+      "type": "char"
+    },
+    "value": {
+      "default": "Article Waiver Application"
+    }
   }
 ]

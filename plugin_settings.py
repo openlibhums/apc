@@ -6,11 +6,11 @@ from utils.install import update_settings
 PLUGIN_NAME = 'APC Manager'
 DESCRIPTION = 'This plugin supports management of APCs in Janeway.'
 AUTHOR = 'Andy Byers'
-VERSION = '1.1'
+VERSION = '1.2'
 SHORT_NAME = 'apc'
 DISPLAY_NAME = 'apc'
 MANAGER_URL = 'apc_index'
-JANEWAY_VERSION = "1.3.8"
+JANEWAY_VERSION = "1.7.0"
 
 # Workflow Settings
 IS_WORKFLOW_PLUGIN = False
