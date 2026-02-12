@@ -1,9 +1,11 @@
 # Janeway APC Plugin
 
-A plugin for [Janeway](https://github.com/BirkbeckCTP/janeway) that enables journals to set, manage, and track Article Publication Charges (APCs). It supports per-section pricing, invoice lifecycle tracking, fee waivers, discounts, and configurable billing notifications.
+A plugin for [Janeway](https://github.com/openlibhums/janeway) that enables journals to set, manage, and track Article Publication Charges (APCs). It supports per-section pricing, invoice lifecycle tracking, fee waivers, discounts, and configurable billing notifications.
 
 **Version:** 1.2
+
 **Minimum Janeway Version:** 1.7.0
+
 **License:** AGPL-3.0
 
 ## Features
