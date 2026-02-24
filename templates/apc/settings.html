@@ -23,29 +23,29 @@
                                 <form method="POST">
                                     {% csrf_token %}
                                     <h4>APCs</h4>
-                                    <label for="enable_apcs">Enable APC display on the Submission page and on the
-                                        Submission
-                                        Start page.
-                                        <input type="checkbox" name="enable_apcs" id="enable_apcs"
-                                               {% if enable_apc == 'on' %}checked="checked"{% endif %}>
+                                    <label for="enable_apcs">{{ form.enable_apcs.label }}
+                                        {{ form.enable_apcs }}
                                     </label>
-                                    <label for="track_apcs">Enable this function to track APCs but don't display info.
-                                        Start page.
-                                        <input type="checkbox" name="track_apcs" id="track_apcs"
-                                               {% if track_apcs == 'on' %}checked="checked"{% endif %}>
+                                    <label for="track_apcs">{{ form.track_apcs.label }}
+                                        {{ form.track_apcs }}
                                     </label>
                                     <hr/>
-                                    <h4>Waivers</h4>
-                                    <label for="enable_waivers">Enable the waiver application workflow, links are
-                                        displayed on the Submission Review page.
-                                        <input type="checkbox" name="enable_waivers" id="enable_waivers"
-                                               {% if enable_waivers == 'on' %}checked="checked"{% endif %}>
+                                    <h4>Author Contribution Mode</h4>
+                                    <label for="author_contribution_mode">{{ form.author_contribution_mode.label }}
+                                        {{ form.author_contribution_mode }}
                                     </label>
 
-                                    <label for="waiver_text">Waiver Application Text, displayed on the Submission Review
-                                        page.
-                                        <textarea name="waiver_text" id="waiver_text">{{ waiver_text|safe }}</textarea>
-                                    </label>
+                                    <div id="waiver-settings" {% if form.author_contribution_mode.value != 'waiver' %}style="display:none;"{% endif %}>
+                                        <label for="waiver_text">{{ form.waiver_text.label }}
+                                            {{ form.waiver_text }}
+                                        </label>
+                                    </div>
+
+                                    <div id="vac-settings" {% if form.author_contribution_mode.value != 'vac' %}style="display:none;"{% endif %}>
+                                        <label for="vac_text">{{ form.vac_text.label }}
+                                            {{ form.vac_text }}
+                                        </label>
+                                    </div>
                                     <button name="save" class="success button">Save</button>
                                 </form>
                             </div>
@@ -59,4 +59,12 @@
 
 {% block js %}
     {% include "elements/jqte.html" %}
+    <script>
+        document.getElementById('author_contribution_mode').addEventListener('change', function() {
+            var waiverSettings = document.getElementById('waiver-settings');
+            var vacSettings = document.getElementById('vac-settings');
+            waiverSettings.style.display = this.value === 'waiver' ? '' : 'none';
+            vacSettings.style.display = this.value === 'vac' ? '' : 'none';
+        });
+    </script>
 {% endblock %}

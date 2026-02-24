@@ -19,6 +19,16 @@ IS_WORKFLOW_PLUGIN = False
 ON_INVOICE_SENT = 'on_invoice_sent'
 ON_INVOICE_PAID = 'on_invoice_paid'
 
+# Plugin settings managed by APCSettingsForm: {name: pretty_name}
+APC_SETTINGS = {
+    'enable_apcs': 'Enable APCs',
+    'track_apcs': 'Track APCs',
+    'author_contribution_mode': 'Author Contribution Mode',
+    'waiver_text': 'Waiver Text',
+    'vac_text': 'VAC Text',
+}
+APC_BOOLEAN_SETTINGS = {'enable_apcs', 'track_apcs'}
+
 
 def get_self():
     defaults = {
@@ -83,8 +93,18 @@ def register_for_events():
     )
 
     event_logic.Events.register_for_event(
+        event_logic.Events.ON_ARTICLE_SUBMITTED,
+        logic.record_vac_optin,
+    )
+
+    event_logic.Events.register_for_event(
         event_logic.Events.ON_ARTICLE_ACCEPTED,
         logic.notify_billing_staffers,
+    )
+
+    event_logic.Events.register_for_event(
+        event_logic.Events.ON_ARTICLE_ACCEPTED,
+        logic.notify_vac_handlers,
     )
 
     event_logic.Events.register_for_event(

@@ -19,6 +19,9 @@
                         <a href="{% url 'apc_add_article' %}" class="button" target="_blank">Add Article</a>
                         <a href="{% url 'apc_billing_staff' %}" class="button">Manage Billing Staff</a>
                         <a href="{% url 'apc_settings' %}" class="button" target="_blank">Edit APC Settings</a>
+                        {% if request.user.is_staff %}
+                            <a href="{% url 'apc_vac_list' %}" class="button">Voluntary Contributions</a>
+                        {% endif %}
                     </div>
                     <div class="content">
 

@@ -1,0 +1,104 @@
+{% extends "admin/core/base.html" %}
+
+{% block title %}Voluntary Author Contributions{% endblock %}
+{% block title-section %}Voluntary Author Contributions{% endblock %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    <li>Voluntary Author Contributions</li>
+{% endblock breadcrumbs %}
+
+{% block body %}
+    <section class="content">
+        <div class="row expanded">
+            <div class="large-12 columns">
+                <div class="box">
+                    <div class="title-area">
+                        <h2>Voluntary Author Contributions</h2>
+                    </div>
+                    <div class="content">
+                        <form method="GET">
+                            <div class="row expanded">
+                                <div class="small-12 large-4 columns">
+                                    <label>{{ filter_form.accepted.label }}:
+                                        {{ filter_form.accepted }}
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="row expanded">
+                                <div class="small-12 large-4 columns">
+                                    <label>{{ filter_form.contacted.label }}:
+                                        {{ filter_form.contacted }}
+                                    </label>
+                                </div>
+                            </div>
+                        </form>
+                        <table class="vactable table small">
+                            <thead>
+                            <tr>
+                                <th>Article</th>
+                                <th>Journal</th>
+                                <th>Author</th>
+                                <th>Date Accepted</th>
+                                <th>Value</th>
+                                <th>Currency</th>
+                                <th>Contacted</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for vac in vac_records %}
+                                <tr>
+                                    <td>{{ vac.article.title|safe }}</td>
+                                    <td>{{ vac.article.journal.name }}</td>
+                                    <td>
+                                        {{ vac.article.correspondence_author.full_name }}<br>
+                                        <a href="mailto:{{ vac.article.correspondence_author.email }}">{{ vac.article.correspondence_author.email }}</a>
+                                        {% with affil=vac.article.correspondence_author.primary_affiliation %}
+                                            {% if affil %}
+                                                <br>{{ affil.organization }}
+                                                {% if affil.organization.ror_id %}
+                                                    <br><small>ROR: {{ affil.organization.ror_id }}</small>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endwith %}
+                                        {% if vac.article.correspondence_author.orcid %}
+                                            <br><small>ORCiD: {{ vac.article.correspondence_author.orcid }}</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ vac.article.date_accepted|default:"Not Accepted" }}</td>
+                                    <td>{{ vac.value }}</td>
+                                    <td>{{ vac.currency }}</td>
+                                    <td>
+                                        {% if vac.contacted %}
+                                            Yes{% if vac.contacted_date %} ({{ vac.contacted_date }}){% endif %}
+                                        {% else %}
+                                            No
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <form method="POST" action="{% url 'apc_vac_toggle_contacted' vac.pk %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="tiny button {% if vac.contacted %}warning{% else %}success{% endif %}">
+                                                {% if vac.contacted %}Mark Not Contacted{% else %}Mark Contacted{% endif %}
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="8">No voluntary contributions recorded.</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block js %}
+    {% include "elements/datatables.html" with target=".vactable" sort=0 page_length=10 %}
+{% endblock %}

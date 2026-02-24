@@ -178,5 +178,65 @@
     "value": {
       "default": "Article Waiver Application"
     }
+  },
+  {
+    "group": {
+      "name": "plugin:apc"
+    },
+    "setting": {
+      "description": "Controls the author contribution mode: empty for none, 'waiver' for APC waivers, 'vac' for voluntary author contributions",
+      "is_translatable": false,
+      "name": "author_contribution_mode",
+      "pretty_name": "Author Contribution Mode",
+      "type": "char"
+    },
+    "value": {
+      "default": ""
+    }
+  },
+  {
+    "group": {
+      "name": "plugin:apc"
+    },
+    "setting": {
+      "description": "Controls the text displayed to authors on the submission review page when voluntary contributions are enabled",
+      "is_translatable": true,
+      "name": "vac_text",
+      "pretty_name": "VAC Text",
+      "type": "rich-text"
+    },
+    "value": {
+      "default": ""
+    }
+  },
+  {
+    "group": {
+      "name": "email"
+    },
+    "setting": {
+      "description": "Email sent to Billing Staffer when a voluntary author contribution is ready.",
+      "is_translatable": true,
+      "name": "apc_vac_contribution_ready",
+      "pretty_name": "APC Plugin: Voluntary Contribution Ready",
+      "type": "rich-text"
+    },
+    "value": {
+      "default": "<p>Dear {{ billing_staffer.staffer.full_name }},</p><p>This is a notification from {{ request.journal.name }}. Article #{{ article.pk }} '{{ article.title|safe }}' has been accepted and the author opted in to a voluntary contribution.</p><p>View the APC Dashboard {{ apc_index_value }}</p>"
+    }
+  },
+  {
+    "group": {
+      "name": "email_subject"
+    },
+    "setting": {
+      "description": "Email subject for email sent to Billing Staffer on voluntary contribution.",
+      "is_translatable": true,
+      "name": "subject_apc_vac_contribution_ready",
+      "pretty_name": "APC Plugin: Voluntary Contribution Ready Subject",
+      "type": "char"
+    },
+    "value": {
+      "default": "Voluntary Author Contribution Ready"
+    }
   }
 ]

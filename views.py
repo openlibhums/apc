@@ -5,6 +5,10 @@ from django.utils import timezone
 
 from plugins.apc import plugin_settings, logic, forms, models
 from submission import models as submission_models
+from django.contrib.admin.views.decorators import staff_member_required
+from django.views.decorators.http import require_POST
+from django.http import Http404
+
 from security.decorators import (
     has_journal,
     editor_user_required,
@@ -19,7 +23,8 @@ from events import logic as event_logic
 @editor_user_required
 def index(request):
     sections = submission_models.Section.objects.filter(
-        journal=request.journal).prefetch_related('sectionapc')
+        journal=request.journal
+    ).prefetch_related("sectionapc")
     waiver_applications = models.WaiverApplication.objects.filter(
         article__journal=request.journal,
         reviewed__isnull=True,
@@ -28,36 +33,35 @@ def index(request):
 
     form = forms.APCForm()
 
-    if request.POST and 'section' in request.POST:
+    if request.POST and "section" in request.POST:
         form = forms.APCForm(request.POST)
         if form.is_valid():
             logic.handle_set_apc(request, form)
         else:
-            modal = request.POST.get('section')
+            modal = request.POST.get("section")
 
     article_apcs = models.ArticleAPC.objects.filter(
-        article__journal=request.journal,
-        article__date_accepted__isnull=False
+        article__journal=request.journal, article__date_accepted__isnull=False
     )
 
-    template = 'apc/index.html'
+    template = "apc/index.html"
     context = {
-        'sections': sections,
-        'form': form,
-        'waiver_applications': waiver_applications,
-        'modal': modal,
-        'articles_for_invoicing': article_apcs.filter(
-            status='new',
+        "sections": sections,
+        "form": form,
+        "waiver_applications": waiver_applications,
+        "modal": modal,
+        "articles_for_invoicing": article_apcs.filter(
+            status="new",
         ),
-        'articles_paid': article_apcs.filter(
-            status='paid',
+        "articles_paid": article_apcs.filter(
+            status="paid",
         ),
-        'articles_unpaid': article_apcs.filter(
-            status='nonpay',
+        "articles_unpaid": article_apcs.filter(
+            status="nonpay",
         ),
-        'articles_invoiced': article_apcs.filter(
-            status='invoiced',
-        )
+        "articles_invoiced": article_apcs.filter(
+            status="invoiced",
+        ),
     }
 
     return render(request, template, context)
@@ -72,23 +76,23 @@ def apc_action(request, apc_id, action):
         article__journal=request.journal,
     )
 
-    if request.POST and 'action' in request.POST:
+    if request.POST and "action" in request.POST:
         event_kwargs = {
-            'request': request,
-            'article': apc.article,
-            'type_of_notification': action,
+            "request": request,
+            "article": apc.article,
+            "type_of_notification": action,
         }
-        if action == 'paid':
+        if action == "paid":
             apc.mark_as_paid()
             event_logic.Events.raise_event(
                 plugin_settings.ON_INVOICE_PAID,
                 **event_kwargs,
             )
-        elif action == 'unpaid':
+        elif action == "unpaid":
             apc.mark_as_unpaid()
-        elif action == 'new':
+        elif action == "new":
             apc.mark_as_new()
-        elif action == 'invoiced':
+        elif action == "invoiced":
             apc.mark_as_invoiced()
             event_logic.Events.raise_event(
                 plugin_settings.ON_INVOICE_SENT,
@@ -98,28 +102,28 @@ def apc_action(request, apc_id, action):
             messages.add_message(
                 request,
                 messages.ERROR,
-                'No suitable action found.',
+                "No suitable action found.",
             )
         messages.add_message(
             request,
             messages.SUCCESS,
-            'APC Updated',
+            "APC Updated",
         )
 
-        return redirect(reverse('apc_index'))
+        return redirect(reverse("apc_index"))
 
-    elif action in ['paid', 'unpaid'] and apc.completed:
+    elif action in ["paid", "unpaid"] and apc.completed:
         messages.add_message(
             request,
             messages.ERROR,
-            'APC has already been completed.',
+            "APC has already been completed.",
         )
-        return redirect(reverse('apc_index'))
+        return redirect(reverse("apc_index"))
 
-    template = 'apc/apc_action.html'
+    template = "apc/apc_action.html"
     context = {
-        'apc': apc,
-        'action': action,
+        "apc": apc,
+        "action": action,
     }
 
     return render(request, template, context)
@@ -129,90 +133,31 @@ def apc_action(request, apc_id, action):
 @editor_user_required
 def settings(request):
     plugin = plugin_settings.get_self()
-    enable_apcs = setting_handler.get_plugin_setting(
-        plugin,
-        'enable_apcs',
-        request.journal,
-        create=True,
-        pretty='Enable APCs',
-    )
-    track_apcs = setting_handler.get_plugin_setting(
-        plugin,
-        'track_apcs',
-        request.journal,
-        create=True,
-        pretty='Track APCs',
-    )
-    waiver_text = setting_handler.get_plugin_setting(
-        plugin,
-        'waiver_text',
-        request.journal,
-        create=True,
-        pretty='Waiver Text',
-    )
-    enable_waivers = setting_handler.get_plugin_setting(
-        plugin,
-        'enable_waivers',
-        request.journal,
-        create=True,
-        pretty='Enable Waivers',
-    )
+    form_kwargs = dict(plugin=plugin, journal=request.journal)
+    form = forms.APCSettingsForm(**form_kwargs)
 
     if request.POST:
-        apc_post = request.POST.get('enable_apcs')
-        track_post = request.POST.get('track_apcs')
-        text_post = request.POST.get('waiver_text')
-        waivers_post = request.POST.get('enable_waivers')
+        form = forms.APCSettingsForm(request.POST, **form_kwargs)
+        if form.is_valid():
+            form.save()
+            messages.add_message(request, messages.SUCCESS, "Setting updated.")
+            return redirect(reverse("apc_settings"))
 
-        setting_handler.save_plugin_setting(
-            plugin,
-            'enable_apcs',
-            apc_post,
-            request.journal,
-        )
-        setting_handler.save_plugin_setting(
-            plugin,
-            'track_apcs',
-            track_post,
-            request.journal,
-        )
-        setting_handler.save_plugin_setting(
-            plugin,
-            'waiver_text',
-            text_post,
-            request.journal,
-        )
-        setting_handler.save_plugin_setting(
-            plugin,
-            'enable_waivers',
-            waivers_post,
-            request.journal,
-        )
-
-        messages.add_message(request, messages.SUCCESS, 'Setting updated.')
-        return redirect(reverse('apc_settings'))
-
-    template = 'apc/settings.html'
-    context = {
-        'enable_apc': enable_apcs.value if enable_apcs else '',
-        'track_apcs': track_apcs.value if track_apcs else '',
-        'enable_waivers': enable_waivers.value if enable_waivers else '',
-        'waiver_text': waiver_text.value if waiver_text else '',
-    }
-
-    return render(request, template, context)
+    return render(request, "apc/settings.html", {"form": form})
 
 
 @has_journal
 @editor_user_required
 def waiver_application(request, application_id):
-    application = get_object_or_404(models.WaiverApplication,
-                                    pk=application_id,
-                                    article__journal=request.journal,
-                                    reviewed__isnull=True)
+    application = get_object_or_404(
+        models.WaiverApplication,
+        pk=application_id,
+        article__journal=request.journal,
+        reviewed__isnull=True,
+    )
     form = forms.WaiverResponse(instance=application)
 
-    if request.POST and 'action' in request.POST:
+    if request.POST and "action" in request.POST:
         form = forms.WaiverResponse(request.POST, instance=application)
 
         if form.is_valid():
@@ -223,12 +168,12 @@ def waiver_application(request, application_id):
             application.reviewed = timezone.now()
             application.reviewer = request.user
             application.save()
-            return redirect(reverse('apc_index'))
+            return redirect(reverse("apc_index"))
 
-    template = 'apc/waiver_application.html'
+    template = "apc/waiver_application.html"
     context = {
-        'application': application,
-        'form': form,
+        "application": application,
+        "form": form,
     }
 
     return render(request, template, context)
@@ -239,7 +184,8 @@ def waiver_application(request, application_id):
 def make_waiver_application(request, article_id):
     article = get_object_or_404(
         submission_models.Article,
-        pk=article_id, journal=request.journal,
+        pk=article_id,
+        journal=request.journal,
         waiverapplication__isnull=True,
     )
     form = forms.WaiverApplication()
@@ -251,23 +197,23 @@ def make_waiver_application(request, article_id):
             waiver = form.save(commit=False)
             waiver.complete_application(article, request)
             kwargs = {
-                'request': request,
-                'article': article,
-                'type_of_notification': 'waiver',
+                "request": request,
+                "article": article,
+                "type_of_notification": "waiver",
             }
 
             logic.notify_billing_staffers(**kwargs)
             return redirect(
                 reverse(
-                    'core_dashboard_article',
-                    kwargs={'article_id': article.pk},
+                    "core_dashboard_article",
+                    kwargs={"article_id": article.pk},
                 )
             )
 
-    template = 'apc/make_waiver_application.html'
+    template = "apc/make_waiver_application.html"
     context = {
-        'article': article,
-        'form': form,
+        "article": article,
+        "form": form,
     }
 
     return render(request, template, context)
@@ -283,9 +229,9 @@ def billing_staff(request):
         journal=request.journal,
     )
 
-    template = 'apc/billing_staff.html'
+    template = "apc/billing_staff.html"
     context = {
-        'billing_staffers': billing_staffers,
+        "billing_staffers": billing_staffers,
     }
 
     return render(request, template, context)
@@ -299,11 +245,13 @@ def manage_billing_staff(request, billing_staffer_id=None):
     """
 
     # Grab the staffer if we have an ID, otherwise set to None.
-    billing_staffer = get_object_or_404(
-        models.BillingStaffer,
-        journal=request.journal,
-        pk=billing_staffer_id
-    ) if billing_staffer_id else None
+    billing_staffer = (
+        get_object_or_404(
+            models.BillingStaffer, journal=request.journal, pk=billing_staffer_id
+        )
+        if billing_staffer_id
+        else None
+    )
 
     form = forms.BillingStafferForm(
         instance=billing_staffer,
@@ -311,19 +259,14 @@ def manage_billing_staff(request, billing_staffer_id=None):
     )
 
     if request.POST:
-        if billing_staffer and 'delete' in request.POST:
+        if billing_staffer and "delete" in request.POST:
             billing_staffer.delete()
-            messages.add_message(
-                request, 
-                messages.INFO,
-                'Billing Staffer deleted.'
-            )
+            messages.add_message(request, messages.INFO, "Billing Staffer deleted.")
             return redirect(
                 reverse(
-                    'apc_billing_staff',
+                    "apc_billing_staff",
                 )
             )
-
 
         form = forms.BillingStafferForm(
             request.POST,
@@ -333,21 +276,13 @@ def manage_billing_staff(request, billing_staffer_id=None):
 
         if form.is_valid():
             billing_staffer = form.save()
-            messages.add_message(
-                request,
-                messages.SUCCESS,
-                'Billing Staffer saved.'
-            )
-            return redirect(
-                reverse(
-                    'apc_billing_staff'
-                )
-            )
+            messages.add_message(request, messages.SUCCESS, "Billing Staffer saved.")
+            return redirect(reverse("apc_billing_staff"))
 
-    template = 'apc/manage_billing_staff.html'
+    template = "apc/manage_billing_staff.html"
     context = {
-        'billing_staffer': billing_staffer,
-        'form': form,
+        "billing_staffer": billing_staffer,
+        "form": form,
     }
 
     return render(request, template, context)
@@ -369,8 +304,8 @@ def add_article(request):
         date_accepted__isnull=False,
     )
 
-    if request.POST and 'article_to_add' in request.POST:
-        article_id = request.POST.get('article_to_add')
+    if request.POST and "article_to_add" in request.POST:
+        article_id = request.POST.get("article_to_add")
 
         try:
             article = submission_models.Article.objects.get(
@@ -392,31 +327,30 @@ def add_article(request):
                 messages.add_message(
                     request,
                     messages.SUCCESS,
-                    'APC set for article.',
+                    "APC set for article.",
                 )
             except models.SectionAPC.DoesNotExist:
                 messages.add_message(
                     request,
                     messages.WARNING,
-                    'APC Management is enabled but this'
-                    ' section has no APC.',
+                    "APC Management is enabled but this section has no APC.",
                 )
         except submission_models.Article.DoesNotExist:
             messages.add_message(
                 request,
                 messages.ERROR,
-                'No article found matching supplied ID.',
+                "No article found matching supplied ID.",
             )
 
         return redirect(
             reverse(
-                'apc_add_article',
+                "apc_add_article",
             )
         )
 
-    template = 'apc/add_article.html'
+    template = "apc/add_article.html"
     context = {
-        'journal_articles': journal_articles,
+        "journal_articles": journal_articles,
     }
 
     return render(request, template, context)
@@ -436,19 +370,18 @@ def discount_apc(request, apc_id):
 
     if request.POST:
         original_value = apc.value
-        new_apc_amount = request.POST.get('new_value')
+        new_apc_amount = request.POST.get("new_value")
         apc.value = new_apc_amount
         apc.save()
 
-        description = 'APC Value changed from {} to {}'.format(
-            original_value,
-            apc.value
+        description = "APC Value changed from {} to {}".format(
+            original_value, apc.value
         )
 
         utils_models.LogEntry.add_entry(
             types=models.APC_VALUE_CHANGE,
             description=description,
-            level='INFO',
+            level="INFO",
             actor=request.user,
             target=apc,
         )
@@ -459,9 +392,66 @@ def discount_apc(request, apc_id):
             description,
         )
 
-    template = 'apc/discount_apc.html'
+    template = "apc/discount_apc.html"
     context = {
-        'apc': apc,
-        'discounts': models.Discount.objects.filter(journal=request.journal),
+        "apc": apc,
+        "discounts": models.Discount.objects.filter(journal=request.journal),
     }
     return render(request, template, context)
+
+
+@staff_member_required
+def vac_list(request):
+    vac_records = (
+        models.VoluntaryContribution.objects.all()
+        .select_related(
+            "article",
+            "article__journal",
+            "article__correspondence_author",
+            "section_apc",
+        )
+        .prefetch_related(
+            "article__correspondence_author__controlledaffiliation_set__organization",
+        )
+    )
+
+    filter_form = forms.VACFilterForm(request.GET)
+    if filter_form.is_valid():
+        acceptance_filter = filter_form.cleaned_data.get("accepted", "")
+        contacted_filter = filter_form.cleaned_data.get("contacted", "")
+        if acceptance_filter == "yes":
+            vac_records = vac_records.filter(article__date_accepted__isnull=False)
+        elif acceptance_filter == "no":
+            vac_records = vac_records.filter(article__date_accepted__isnull=True)
+        if contacted_filter == "yes":
+            vac_records = vac_records.filter(contacted=True)
+        elif contacted_filter == "no":
+            vac_records = vac_records.filter(contacted=False)
+
+    template = "apc/vac_list.html"
+    context = {
+        "vac_records": vac_records,
+        "filter_form": filter_form,
+    }
+
+    return render(request, template, context)
+
+
+@require_POST
+@staff_member_required
+def vac_toggle_contacted(request, vac_id):
+    vac = get_object_or_404(
+        models.VoluntaryContribution,
+        pk=vac_id,
+    )
+
+    vac.contacted = not vac.contacted
+    vac.contacted_date = timezone.now() if vac.contacted else None
+    vac.save()
+    messages.add_message(
+        request,
+        messages.SUCCESS,
+        "VAC contacted status updated.",
+    )
+
+    return redirect(reverse("apc_vac_list"))
