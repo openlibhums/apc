@@ -43,28 +43,41 @@ def waiver_info(context):
     plugin = plugin_settings.get_self()
     request = context['request']
 
-    waiver_text = setting_handler.get_plugin_setting(
+    author_contribution_mode = setting_handler.get_plugin_setting(
         plugin,
-        'waiver_text',
+        'author_contribution_mode',
         request.journal,
         create=True,
-        pretty='Waiver Text',
-    )
-    enable_waivers = setting_handler.get_plugin_setting(
-        plugin,
-        'enable_waivers',
-        request.journal,
-        create=True,
-        pretty='Enable Waivers',
+        pretty='Author Contribution Mode',
     )
 
-    if enable_waivers.value == 'on':
+    mode = author_contribution_mode.value if author_contribution_mode else ''
+
+    if mode == 'vac':
+        vac_text = setting_handler.get_plugin_setting(
+            plugin,
+            'vac_text',
+            request.journal,
+            create=True,
+            pretty='VAC Text',
+        )
+        return render_to_string(
+            'apc/vac_optin.html',
+            {'request': request, 'vac_text': vac_text.value if vac_text else ''},
+        )
+    elif mode == 'waiver':
+        waiver_text = setting_handler.get_plugin_setting(
+            plugin,
+            'waiver_text',
+            request.journal,
+            create=True,
+            pretty='Waiver Text',
+        )
         return render_to_string(
             'apc/waiver_info.html',
             {'request': request, 'waiver_text': waiver_text.value},
         )
-    else:
-        return ''
+    return ''
 
 
 def waiver_application(context):
@@ -72,21 +85,22 @@ def waiver_application(context):
     request = context['request']
     article = context['article']
 
-    waiver_text = setting_handler.get_plugin_setting(
+    author_contribution_mode = setting_handler.get_plugin_setting(
         plugin,
-        'waiver_text',
+        'author_contribution_mode',
         request.journal,
         create=True,
-        pretty='Waiver Text',
+        pretty='Author Contribution Mode',
     )
-    enable_waivers = setting_handler.get_plugin_setting(
-        plugin,
-        'enable_waivers',
-        request.journal,
-        create=True,
-        pretty='Enable Waivers',
-    )
-    if enable_waivers.value == 'on':
+
+    if author_contribution_mode and author_contribution_mode.value == 'waiver':
+        waiver_text = setting_handler.get_plugin_setting(
+            plugin,
+            'waiver_text',
+            request.journal,
+            create=True,
+            pretty='Waiver Text',
+        )
         return render_to_string(
             'apc/article_waiver_app.html',
             {
@@ -95,5 +109,4 @@ def waiver_application(context):
                 'article': article,
             },
         )
-    else:
-        return ''
+    return ''

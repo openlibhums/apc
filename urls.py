@@ -39,5 +39,15 @@ urlpatterns = [
         views.discount_apc,
         name='discount_apc',
     ),
+    re_path(
+        r'^vac/$',
+        views.vac_list,
+        name='apc_vac_list',
+    ),
+    re_path(
+        r'^vac/(?P<vac_id>\d+)/toggle/$',
+        views.vac_toggle_contacted,
+        name='apc_vac_toggle_contacted',
+    ),
 
 ]

@@ -187,12 +187,51 @@ class WaiverApplication(models.Model):
             return 'Waiver has not been reviewed.'
 
 
+class VoluntaryContribution(models.Model):
+    article = models.OneToOneField(
+        'submission.Article',
+        on_delete=models.CASCADE,
+    )
+    section_apc = models.ForeignKey(
+        SectionAPC,
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+    value = models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        default=0,
+        help_text='Decimal with two places eg. 200.00',
+    )
+    currency = models.CharField(
+        max_length=25,
+        blank=True,
+        default='',
+        help_text='The currency of the APC value eg. GBP or USD.',
+    )
+    recorded = models.DateTimeField(default=timezone.now)
+    contacted = models.BooleanField(default=False)
+    contacted_date = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        ordering = ('-recorded',)
+
+    def __str__(self):
+        return 'VAC for Article {pk} - {value} {currency}'.format(
+            pk=self.article.pk,
+            value=self.value,
+            currency=self.currency,
+        )
+
+
 def type_of_notification_choices():
     return (
         ('ready', 'Ready for Invoicing'),
         ('invoiced', 'Invoice Sent'),
         ('paid', 'Invoice Paid'),
         ('waiver', 'Waiver Application'),
+        ('vac', 'Voluntary Contribution'),
     )
 
 
@@ -232,6 +271,8 @@ class BillingStaffer(models.Model):
             return 'apc_article_invoice_sent'
         elif self.type_of_notification == 'waiver':
             return 'apc_article_waiver'
+        elif self.type_of_notification == 'vac':
+            return 'apc_vac_contribution_ready'
         else:
             return 'apc_article_invoice_paid'
 
