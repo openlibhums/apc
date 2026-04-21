@@ -10,18 +10,29 @@ def migrate_enable_waivers(apps, schema_editor):
     """
     SettingValue = apps.get_model('core', 'SettingValue')
     Setting = apps.get_model('core', 'Setting')
+    SettingGroup = apps.get_model('core', 'SettingGroup')
 
     try:
         waivers_setting = Setting.objects.get(
             name='enable_waivers',
             group__name='plugin:apc',
         )
-        mode_setting = Setting.objects.get(
-            name='author_contribution_mode',
-            group__name='plugin:apc',
-        )
     except Setting.DoesNotExist:
         return
+
+    group, _ = SettingGroup.objects.get_or_create(name='plugin:apc')
+    mode_setting, _ = Setting.objects.get_or_create(
+        name='author_contribution_mode',
+        group=group,
+        defaults={
+            'types': 'char',
+            'pretty_name': 'Author Contribution Mode',
+            'description': (
+                'Controls the author contribution mode: empty for none, '
+                "'waiver' for APC waivers, 'vac' for voluntary author contributions"
+            ),
+        },
+    )
 
     for sv in SettingValue.objects.filter(setting=waivers_setting, value='on'):
         SettingValue.objects.update_or_create(
